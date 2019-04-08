@@ -44,6 +44,52 @@ const styles = theme => ({
     margin: theme.spacing.unit,
     width: 220,
   },
+  rTable :{
+  	display: 'block',
+  	width: '100%',
+},
+rTableHeading:{
+  clear: 'both',
+}
+, rTableBody:{
+  clear: 'both',
+}
+, rTableFoot:{
+  clear: 'both',
+}, 
+rTableRow:{
+  	clear: 'both',
+},
+rTableHead:{
+  backgroundColor:'#DDD',
+  	// font: bold;
+}, rTableFoot:{
+  backgroundColor:'#DDD',
+  	// font: bold;
+},
+rTableCell:{
+  border: '1px solid #999999',
+  display: 'inline-block',
+  height: 17,
+  overflow: 'hidden',
+  padding: '3 1.8%',
+  width: '32%',
+}, rTableHead :{
+  	border: '1px solid #999999',
+  	display: 'inline-block',
+  	height: 17,
+  	overflow: 'hidden',
+  	padding: '3 1.8%',
+  	width: '32%',
+}
+// .rTable:after {
+//   	visibility: hidden;
+//   	display: block;
+//   	font-size: 0;
+//   	content: " ";
+//   	clear: both;
+//   	height: 0;
+// }
 })
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -61,6 +107,7 @@ class InvoiceItems extends Component {
   state={
     rows:[],
     selectedProduct:'',
+    productAdded:false,
   }
   componentDidMount = () => {
     this.props.dispatch(fetchProducts());
@@ -97,10 +144,13 @@ class InvoiceItems extends Component {
     this.state.rows[index].totalPrice=this.state.rows[index].price * this.state.rows[index].count;
     this.setState({rows: this.state.rows });
     this.props.updateTableDate(this.state.rows)
+    this.handleClickNewRow();
   };
   selectedRowProductChange = (product) => {
     let addedProduct;
+    this.setState({productAdded: true });
    this.props.dispatch(addProductRequest(product)).then(res=>{
+    this.setState({productAdded: false });
     addedProduct=res.product;
     const index= this.state.rows.findIndex(x=>x.productId=== this.state.selectedProduct); 
     this.setState({ [index]: addedProduct._id });
@@ -109,10 +159,9 @@ class InvoiceItems extends Component {
     this.state.rows[index].price=addedProduct.price;
     this.state.rows[index].totalPrice=this.state.rows[index].price * this.state.rows[index].count;
     this.setState({rows: this.state.rows });
-    this.props.updateTableDate(this.state.rows)
+    this.props.updateTableDate(this.state.rows);
+    this.handleClickNewRow();
    });
-
-
   };
   handleCountChange = name => event => {
     const index= this.state.rows.findIndex(x=>x.productId=== name);
@@ -149,7 +198,7 @@ class InvoiceItems extends Component {
     return (
           <div>
             <Paper className={classes.root}>
-                  <Table className={classes.table}>
+                  {/* <Table className={classes.table}>
                    <TableHead>
                      <TableRow>
                       <CustomTableCell >محصول</CustomTableCell>
@@ -168,7 +217,7 @@ class InvoiceItems extends Component {
                           className={classes.addProduct} 
                            container spacing={8}>
                             <Grid item xs={6} sm={6}>
-                            <NewProduct   selectedRowChange={this.selectedRowProductChange} />
+                            <NewProduct isLoading={this.state.productAdded}  selectedRowChange={this.selectedRowProductChange} />
                             </Grid>
                             <Grid item xs={6} sm={6}>
                               <FormControl className={classes.formControl}>
@@ -243,7 +292,31 @@ class InvoiceItems extends Component {
                         </TableRow>
                     ))}
                   </TableBody>
-              </Table>
+              </Table> */}
+
+
+
+<h2>Phone numbers</h2>
+<div className={classes.rTable}>
+<div className={classes.rTableRow}>
+<div className={classes.rTableHead}><strong>Name</strong></div>
+<div className={classes.rTableHead}><span >Telephone</span></div>
+<div className={classes.rTableHead}>&nbsp;</div>
+</div>
+<div className={classes.rTableRow}>
+<div className={classes.rTableCell}>John</div>
+<div className={classes.rTableCell}><a href="tel:0123456785">0123 456 785</a></div>
+<div className={classes.rTableCell}><img src="images/check.gif" alt="checked" /></div>
+</div>
+<div className={classes.rTableRow}>
+<div className={classes.rTableCell}>Cassie</div>
+<div className={classes.rTableCell}><a href="tel:9876532432">9876 532 432</a></div>
+<div className={classes.rTableCell}><img src="images/check.gif" alt="checked" /></div>
+</div>
+</div>
+
+
+
        </Paper>
      </div> 
     )}

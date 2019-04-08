@@ -20,7 +20,8 @@ const styles = theme => ({
   stepper:{
   },
   actions:{
-    float:'left'
+    float:'left',
+    margin:20
   },
   backButton: {
     marginRight: theme.spacing.unit,
@@ -51,8 +52,8 @@ class NewInvoiceStepper extends React.Component {
     step1Data:{invoiceNumber:'',invoiceCustomer:'',invoiceCustomerId:'',invoiceRows:[]},
     step2Data:{address:{state:'',city:''},postType:'',deliveryDate:{timeAmount:0,timeType:''}},
     open:false,
-    stepMessages:{step1:'اطلاعات مربوط به مرحله ی اول را تکمیل کنید'
-    ,step2:'اطلاعات مربوط به مرحله ی دوم را تکمیل کنید'}
+    warningMessage:''
+    // ,step2:'اطلاعات مربوط به مرحله ی دوم را تکمیل کنید'
   };
   componentDidMount = () => {
     getNextInvoiceNumber().then((data) => {
@@ -90,7 +91,12 @@ class NewInvoiceStepper extends React.Component {
   switch (this.state.activeStep) {
     case 0:
      if (this.state.step1Data.invoiceCustomer===''||this.state.step1Data.invoiceRows.length===0 ) {
-      this.setState({ open: true });
+      this.setState(
+        { open: true ,
+          warningMessage:(this.state.step1Data.invoiceCustomer==='')
+          ?'اطلاعات مربوط به نام و نام خانوادگی را تکمیل کنید'
+          :'اطلاعات مربوط به فاکتور را تکمیل کنید'
+        });
        return;
      }
       break;
@@ -100,7 +106,17 @@ class NewInvoiceStepper extends React.Component {
     this.state.step2Data.postType===''||
     this.state.step2Data.deliveryDate.timeAmount===0||
     this.state.step2Data.deliveryDate.timeType===0 ) {
-      this.setState({ open: true });
+      this.setState(
+        { open: true ,
+          warningMessage:(this.state.step2Data.address.state==='')
+          ?'اطلاعات مربوط به استان را تکمیل کنید'
+          :(this.state.step2Data.address.city==='')?
+          'اطلاعات مربوط به شهر را تکمیل کنید'
+          :(this.state.step2Data.postType==='')?
+          'اطلاعات مربوط به روش پست را تکمیل کنید'
+          :
+          'اطلاعات مربوط به تاریخ تحویل را تکمیل کنید'
+        });
       return;       
     }
       break;
@@ -184,9 +200,7 @@ class NewInvoiceStepper extends React.Component {
           )}
         </div>
         <SimpleSnackbar open={this.state.open} close={this.handleClose}
-         message={(this.state.activeStep===0)?
-         this.state.stepMessages.step1:
-         this.state.stepMessages.step2}/>
+         message={this.state.warningMessage}/>
       </div>
     );
   }

@@ -114,13 +114,12 @@ class IntegrationAutosuggest extends React.Component {
   state = {
     single: '',
     popper: '',
+    selectedCustomerId:'',
     suggestions: [],
   };
    getSuggestionValue=(suggestion)=> {
     console.log('this is ',suggestion.value);
-    this.setState({
-      selectedCustomerId:suggestion.value
-    });
+    this.props.getInputData(suggestion.label,suggestion.value);
     return suggestion.label;
   }
   componentDidMount = () => {
@@ -131,7 +130,6 @@ class IntegrationAutosuggest extends React.Component {
   }
   handleSuggestionsFetchRequested = ({ value }) => {
     this.setState({      
-
       suggestions: getSuggestions(value,this.props.customers),
     });
   };
@@ -146,7 +144,6 @@ class IntegrationAutosuggest extends React.Component {
     this.setState({
       [name]: newValue,
     });
-    this.props.getInputData(newValue,this.state.selectedCustomerId);
   };
 
   render() {

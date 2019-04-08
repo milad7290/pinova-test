@@ -53,6 +53,7 @@ const create = (req, res) => {
   //     name: invoiceCustomer,
   //   })
   //   .then(customer => {
+    console.log('invoiceCustomerId',invoiceCustomerId)
       if (invoiceCustomerId && invoiceCustomerId!=='') {
         mdb.collection('invoices').insertOne({
           customerId: new ObjectID(invoiceCustomerId),

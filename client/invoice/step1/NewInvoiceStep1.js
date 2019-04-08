@@ -18,6 +18,7 @@ class NewInvoiceStep1 extends Component {
   }
 
   getAutosuggestInput= (value,id) => {
+    console.log('value',value,'id',id);
     this.props.step1Data.invoiceCustomer=value;
     this.props.step1Data.invoiceCustomerId=id;
    }

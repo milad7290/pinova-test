@@ -48,7 +48,7 @@ class DeliveryTime extends Component {
     return (
        <Card className={classes.card}>
          <CardHeader
-          title="تاریخ تحویب"          
+          title="تاریخ تحویل"          
         />
         <CardContent>
         <div className={classes.root}>
@@ -59,7 +59,7 @@ class DeliveryTime extends Component {
                                 required
                                 margin="dense"
                                 id="amount"
-                                label="amount"                                
+                                label=""                                
                                 type="text"                                
                                 value={this.state.amount} 
                                 onChange={this.handleChange('amount')}
