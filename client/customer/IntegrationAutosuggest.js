@@ -143,6 +143,10 @@ class IntegrationAutosuggest extends React.Component {
   };
 
   handleChange = name => (event, { newValue }) => {
+    const persian = /^[\u0600-\u06FF\s0-9]+$/;
+    if (!persian.test(newValue)&& newValue!=='') {
+      return
+     }
     this.setState({
       [name]: newValue,
     });
