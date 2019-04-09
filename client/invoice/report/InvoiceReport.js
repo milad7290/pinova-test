@@ -143,6 +143,8 @@ class InvoiceReport extends React.Component {
           _id:invoice._id+row.productName+invoice.invoiceNumber,
           invoiceCustomer:invoice.invoiceCustomer,
           productName:row.productName,
+          price:row.price,
+          count:row.count,
           invoiceNumber:invoice.invoiceNumber
         }
         items.push(item);

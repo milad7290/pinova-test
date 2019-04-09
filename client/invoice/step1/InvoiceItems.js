@@ -27,7 +27,7 @@ const styles = theme => ({
     textAlign: 'center'
   },
   addProduct:{
-    width: '25%',
+    display:'-webkit-inline-box',
   },
   row: {
     textAlign: 'center',
@@ -42,7 +42,7 @@ const styles = theme => ({
   },
   formControl: {
     margin: theme.spacing.unit,
-    width: 220,
+    width: 120,
   },
   rTable :{
   	display: 'block',
@@ -58,38 +58,31 @@ rTableHeading:{
   clear: 'both',
 }, 
 rTableRow:{
-  	clear: 'both',
+    clear: 'both',
+  borderBottom: '1px solid rgba(224, 224, 224, 1)',
+  backgroundColor: '#fafafa'
 },
 rTableHead:{
   backgroundColor:'#DDD',
-  	// font: bold;
 }, rTableFoot:{
   backgroundColor:'#DDD',
-  	// font: bold;
 },
 rTableCell:{
-  border: '1px solid #999999',
   display: 'inline-block',
-  height: 17,
-  overflow: 'hidden',
-  padding: '3 1.8%',
-  width: '32%',
-}, rTableHead :{
-  	border: '1px solid #999999',
-  	display: 'inline-block',
-  	height: 17,
-  	overflow: 'hidden',
-  	padding: '3 1.8%',
-  	width: '32%',
+  height: 40,
+  textAlign: 'center',
+  padding: '2%',
+  width: '16%',
 }
-// .rTable:after {
-//   	visibility: hidden;
-//   	display: block;
-//   	font-size: 0;
-//   	content: " ";
-//   	clear: both;
-//   	height: 0;
-// }
+, rTableHead :{
+  backgroundColor:'black',
+  color:'white',
+  	display: 'inline-block',
+  	height: 40,
+  	textAlign: 'center',
+    padding: '9px 0px 0px 0px',
+  	width: '20%',
+}
 })
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -198,125 +191,98 @@ class InvoiceItems extends Component {
     return (
           <div>
             <Paper className={classes.root}>
-                  {/* <Table className={classes.table}>
-                   <TableHead>
-                     <TableRow>
-                      <CustomTableCell >محصول</CustomTableCell>
-                      <CustomTableCell align="center">تعداد</CustomTableCell>
-                      <CustomTableCell align="center">قیمت</CustomTableCell>
-                      <CustomTableCell align="center">قیمت کل</CustomTableCell>
-                      <CustomTableCell align="center">اضافه و پاک</CustomTableCell>
-                    </TableRow>
-                 </TableHead>
-                 <TableBody>
+
+
+                 <div className={classes.rTable}>
+                      <div className={classes.rTableRow}>
+                      <div className={classes.rTableHead}><strong>محصول</strong></div>
+                      <div className={classes.rTableHead}><strong>تعداد</strong></div>
+                      <div className={classes.rTableHead}><strong>قیمت</strong></div>
+                      <div className={classes.rTableHead}><strong>قیمت کل</strong></div>
+                      <div className={classes.rTableHead}><strong>اضافه و پاک</strong></div>
+                 </div>
                      {this.state.rows.map(row => (
-                       <TableRow onClick={() =>this.handlepProductIdChange(row.productId.toString())} className={classes.row} key={row.productId}>
-                          <CustomTableCell >
+                       <div className={classes.rTableRow} onClick={() =>this.handlepProductIdChange(row.productId.toString())} key={row.productId}>
+                              <div className={classes.rTableCell}>
+                              <div 
+                              className={classes.addProduct} 
+                              container >
+                                <div >
+                                <NewProduct isLoading={this.state.productAdded}  selectedRowChange={this.selectedRowProductChange} />
+                                </div>
+                                <div >
+                                  <FormControl className={classes.formControl}>
+                                    <InputLabel htmlFor="product-native-simple"></InputLabel>
+                                    <Select
+                                      native
+                                      value={row.productId.toString()}
+                                      onChange={this.handleProductChange(row.productId.toString())}
+                                      inputProps={{
+                                        name: row.productId.toString(),
+                                        id: 'product-native-simple',
+                                      }}
+                                    >
+                                      <option value="" />
+                                      {this.props.products.map(product => (
+                                            <option key={product._id} value={product._id} >
+                                              {product.name}
+                                            </option>
+                                      ))}
+                                    </Select>
+                                  </FormControl>
 
-                          <Grid 
-                          className={classes.addProduct} 
-                           container spacing={8}>
-                            <Grid item xs={6} sm={6}>
-                            <NewProduct isLoading={this.state.productAdded}  selectedRowChange={this.selectedRowProductChange} />
-                            </Grid>
-                            <Grid item xs={6} sm={6}>
-                              <FormControl className={classes.formControl}>
-                                <InputLabel htmlFor="product-native-simple"></InputLabel>
-                                <Select
-                                  native
-                                  value={row.productId.toString()}
-                                  onChange={this.handleProductChange(row.productId.toString())}
-                                  inputProps={{
-                                    name: row.productId.toString(),
-                                    id: 'product-native-simple',
-                                  }}
-                                >
-                                  <option value="" />
-                                  {this.props.products.map(product => (
-                                        <option key={product._id} value={product._id} >
-                                          {product.name}
-                                        </option>
-                                  ))}
-                                </Select>
-                              </FormControl>
-
-                            </Grid>                         
-                          </Grid>                         
-                          </CustomTableCell>
-                          <CustomTableCell align="center">
-                          <TextField
-                                    id="standard-number"
-                                    label="Count"
-                                    value={this.state.count}
-                                    onChange={this.handleCountChange(row.productId.toString())}
-                                    type="number"
-                                    defaultValue={1}
-                                    className={classes.textField}
-                                    InputLabelProps={{
-                                      shrink: true,
-                                    }}
-                                    inputProps={{
-                                      name: row.productId.toString(),
-                                    }}
-                                    margin="normal"
-                                  />
-                          </CustomTableCell>
-                          <CustomTableCell align="center">{ numberWithoutCommas(row.price)}</CustomTableCell>
-                          <CustomTableCell align="center">{ numberWithoutCommas(row.totalPrice)}</CustomTableCell>
-                          <CustomTableCell align="center">
-                          <Grid container spacing={24}>
-                            
-                            { (this.state.rows.length-1===this.getIndex(row.productId) )?    
-                                                     
-                               (<Grid item xs={6} sm={6}>  
-                                  <IconButton onClick={this.handleClickNewRow} aria-label="اضافه کردن ردیف" >
-                                <AddCircle />
-                               </IconButton>
-                               </Grid>):
-                               (<Grid item xs={6} sm={6}>  
-                                </Grid> )
-                            }
-                            { (0!==this.getIndex(row.productId) || this.state.rows.length>1)?                           
-                                <Grid item xs={6} sm={6}>
-                               <IconButton onClick={() =>this.handleClickRemoveRow(row.productId.toString())} aria-label="پاک کردن ردیف" >
-                                  <RemoveCircle />
-                               </IconButton>
-                              </Grid>   :
-                               (<Grid item xs={6} sm={6}>  
-                                </Grid> )
-                            }                         
-                                                
-                          </Grid>
-                  
-                          </CustomTableCell>
-                        </TableRow>
+                                </div>                         
+                              </div>                         
+                              </div>
+                              <div className={classes.rTableCell}>
+                              <TextField
+                                        id="standard-number"
+                                        label="Count"
+                                        value={this.state.count}
+                                        onChange={this.handleCountChange(row.productId.toString())}
+                                        type="number"
+                                        defaultValue={1}
+                                        className={classes.textField}
+                                        InputLabelProps={{
+                                          shrink: true,
+                                        }}
+                                        inputProps={{
+                                          name: row.productId.toString(),
+                                        }}
+                                        margin="normal"
+                                      />
+                              </div>
+                              <div className={classes.rTableCell}>{ numberWithoutCommas(row.price)}</div>
+                              <div className={classes.rTableCell}>{ numberWithoutCommas(row.totalPrice)}</div>
+                              <div className={classes.rTableCell}>
+                              <div className={classes.addProduct} container >
+                                
+                                { (this.state.rows.length-1===this.getIndex(row.productId) )?    
+                                                        
+                                  (<div >  
+                                      <IconButton onClick={this.handleClickNewRow} aria-label="اضافه کردن ردیف" >
+                                    <AddCircle />
+                                  </IconButton>
+                                  </div>):
+                                  (<div >  
+                                    </div> )
+                                }
+                                { (0!==this.getIndex(row.productId) || this.state.rows.length>1)?                           
+                                    <div >
+                                  <IconButton onClick={() =>this.handleClickRemoveRow(row.productId.toString())} aria-label="پاک کردن ردیف" >
+                                      <RemoveCircle />
+                                  </IconButton>
+                                  </div>   :
+                                  (<div >  
+                                    </div> )
+                                }                         
+                                                    
+                              </div>
+                      
+                              </div>
+                          </div>
                     ))}
-                  </TableBody>
-              </Table> */}
-
-
-
-<h2>Phone numbers</h2>
-<div className={classes.rTable}>
-<div className={classes.rTableRow}>
-<div className={classes.rTableHead}><strong>Name</strong></div>
-<div className={classes.rTableHead}><span >Telephone</span></div>
-<div className={classes.rTableHead}>&nbsp;</div>
-</div>
-<div className={classes.rTableRow}>
-<div className={classes.rTableCell}>John</div>
-<div className={classes.rTableCell}><a href="tel:0123456785">0123 456 785</a></div>
-<div className={classes.rTableCell}><img src="images/check.gif" alt="checked" /></div>
-</div>
-<div className={classes.rTableRow}>
-<div className={classes.rTableCell}>Cassie</div>
-<div className={classes.rTableCell}><a href="tel:9876532432">9876 532 432</a></div>
-<div className={classes.rTableCell}><img src="images/check.gif" alt="checked" /></div>
-</div>
-</div>
-
-
-
+              </div>              
        </Paper>
      </div> 
     )}
