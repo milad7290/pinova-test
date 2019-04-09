@@ -2,14 +2,13 @@ import React from 'react'
 import MainRouter from './MainRouter'
 import {BrowserRouter} from 'react-router-dom'
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
-import createPalette from 'material-ui/styles';
-import createTypography from 'material-ui/styles';
-import { blueGrey, lightGreen } from 'material-ui/colors'
+import { blueGrey, lightGreen } from '@material-ui/core/colors'
 import { hot } from 'react-hot-loader'
 import { Provider } from 'react-redux';
 import PropTypes from 'prop-types';
 const theme = createMuiTheme({
   typography: {
+    useNextVariants: true,
     fontFamily: '"IranSans"',
   },
   palette: {

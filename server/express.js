@@ -16,8 +16,8 @@ import StaticRouter from 'react-router-dom/StaticRouter'
 
 import { SheetsRegistry } from 'react-jss/lib/jss'
 import JssProvider from 'react-jss/lib/JssProvider'
-import { MuiThemeProvider, createMuiTheme, createGenerateClassName } from 'material-ui/styles'
-import { blueGrey, lightGreen } from 'material-ui/colors'
+import { MuiThemeProvider, createMuiTheme, createGenerateClassName } from '@material-ui/core/styles'
+import { blueGrey, lightGreen } from '@material-ui/core/colors'
 
 import devBundle from './devBundle'
 

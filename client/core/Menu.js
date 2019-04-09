@@ -1,9 +1,9 @@
 import React from 'react'
-import AppBar from 'material-ui/AppBar'
-import Toolbar from 'material-ui/Toolbar'
-import Typography from 'material-ui/Typography'
-import IconButton from 'material-ui/IconButton'
-import HomeIcon from 'material-ui-icons/Home'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import IconButton from '@material-ui/core/IconButton'
+import HomeIcon from '@material-ui/icons/Home'
 import {Link, withRouter} from 'react-router-dom'
 
 const isActive = (history, path) => {
@@ -21,7 +21,7 @@ const isPartActive = (history, path) => {
 const Menu = withRouter(({history}) => (
   <AppBar position="static">
     <Toolbar>
-      <Typography type="title" color="inherit">
+      <Typography type="h6" color="inherit">
       پروژه تست PINOVA  
       </Typography>
       <div>

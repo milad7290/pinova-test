@@ -1,14 +1,14 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
-import Card from 'material-ui/Card';
-import CardContent from 'material-ui/Card/CardContent';
-import Grid from 'material-ui/Grid'
-import CardHeader from 'material-ui/Card/CardHeader';
-import FormControl from 'material-ui/Form/FormControl';
-import InputLabel from 'material-ui/Input/InputLabel';
+import {withStyles} from '@material-ui/core/styles'
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Grid from '@material-ui/core/Grid'
+import CardHeader from '@material-ui/core/CardHeader';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
 import {iranStates} from '../api-invoice';
-import Select from 'material-ui/Select';
+import Select from '@material-ui/core/Select';
 const styles = theme => ({
   root:{
     width: '60%',

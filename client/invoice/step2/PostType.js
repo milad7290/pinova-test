@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withStyles} from 'material-ui/styles'
-import Radio from 'material-ui/Radio';
-import RadioGroup from 'material-ui/Radio/RadioGroup';
-import FormControlLabel from 'material-ui/Form/FormControlLabel';
-import FormControl from 'material-ui/Form/FormControl';
-import FormLabel from 'material-ui/Form/FormLabel';
-import Card from 'material-ui/Card';
-import CardContent from 'material-ui/Card/CardContent';
-import CardHeader from 'material-ui/Card/CardHeader';
+import {withStyles} from '@material-ui/core/styles'
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 const styles = theme => ({
   root: {
     display: 'flex',

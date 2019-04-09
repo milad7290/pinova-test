@@ -1,13 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import Table from 'material-ui/Table';
-import TableBody from 'material-ui/Table/TableBody';
-import TableCell from 'material-ui/Table/TableCell';
-import TableHead from 'material-ui/Table/TableHead';
-import TableRow from 'material-ui/Table/TableRow';
-import Typography from 'material-ui/Typography'
-import Paper from 'material-ui/Paper';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography'
+import Paper from '@material-ui/core/Paper';
 import  moment from 'moment-jalaali';
 import {persianNumber,numberWithoutCommas} from '../../helper/persianNumber'
 const styles = theme => ({
@@ -81,18 +76,6 @@ rTableCell2:{
   	width: '20%',
 }
 });
-const CustomTableCell = withStyles(theme => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-    textAlign:'center'
-  },
-  body: {
-    fontSize: 14,
-    textAlign:'center'
-
-  },
-}))(TableCell);
 class InvoiceTable extends React.Component {
   state={
   }

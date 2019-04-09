@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import Stepper from 'material-ui/Stepper';
-import Step from 'material-ui/Stepper/Step';
-import StepLabel from 'material-ui/Stepper/StepLabel';
+import { withStyles } from '@material-ui/core/styles';
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 import NewInvoiceStep1 from './step1/NewInvoiceStep1';
 import NewInvoiceStep2 from './step2/NewInvoiceStep2';
 import { Redirect } from 'react-router-dom'

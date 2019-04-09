@@ -1,18 +1,12 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
-import Grid from 'material-ui/Grid'
-import Table from 'material-ui/Table';
-import TableBody from 'material-ui/Table/TableBody';
-import TableCell from 'material-ui/Table/TableCell';
-import TableHead from 'material-ui/Table/TableHead';
-import TableRow from 'material-ui/Table/TableRow';
-import Paper from 'material-ui/Paper';
-import IconButton from 'material-ui/IconButton'
-import AddCircle  from 'material-ui-icons/AddCircle'
-import RemoveCircle  from 'material-ui-icons/RemoveCircle'
-import InputLabel from 'material-ui/Input/InputLabel';
-import FormControl from 'material-ui/Form/FormControl';
+import {withStyles} from '@material-ui/core/styles'
+import Paper from '@material-ui/core/Paper';
+import IconButton from '@material-ui/core/IconButton'
+import AddCircle  from '@material-ui/icons/AddCircle'
+import RemoveCircle  from '@material-ui/icons/RemoveCircle'
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import NewProduct from '../../product/NewProduct'
@@ -93,18 +87,6 @@ rTableHead :{
   	width: '20%',
 }
 })
-const CustomTableCell = withStyles(theme => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-    textAlign:'center'
-  },
-  body: {
-    fontSize: 14,
-    textAlign:'center'
-
-  },
-}))(TableCell);
 class InvoiceItems extends Component {
   state={
     rows:[],

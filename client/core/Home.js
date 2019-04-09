@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
-import Grid from 'material-ui/Grid'
-import Card from 'material-ui/Card';
+import {withStyles} from '@material-ui/core/styles'
+import Grid from '@material-ui/core/Grid'
+import Card from '@material-ui/core/Card';
 import {Link} from 'react-router-dom'
-import Button from 'material-ui/Button'
+import Button from '@material-ui/core/Button'
 const styles = theme => ({
   card: {
     flexGrow: 1,

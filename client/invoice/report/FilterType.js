@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withStyles} from 'material-ui/styles'
-import Radio from 'material-ui/Radio';
-import RadioGroup from 'material-ui/Radio/RadioGroup';
-import FormControlLabel from 'material-ui/Form/FormControlLabel';
-import FormControl from 'material-ui/Form/FormControl';
-import FormLabel from 'material-ui/Form/FormLabel';
-import Typography from 'material-ui/Typography';
+import {withStyles} from '@material-ui/core/styles'
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import Typography from '@material-ui/core/Typography';
 const styles = theme => ({
   root: {
     margin:theme.spacing.unit
