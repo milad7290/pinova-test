@@ -8,11 +8,14 @@ import DialogActions from 'material-ui/Dialog/DialogActions';
 import DialogContent from 'material-ui/Dialog/DialogContent';
 import DialogContentText from 'material-ui/Dialog/DialogContentText';
 import DialogTitle from 'material-ui/Dialog/DialogTitle';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import green from '@material-ui/core/colors/green';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+// import { fetchProducts,addProductRequest } from '../../product/productActions';
+import { getLoading } from '../product/productReducer';
 function getModalStyle() {
   const top = 50 ;
   const left = 50 ;
@@ -59,9 +62,9 @@ const styles = theme => ({
 class NewProduct extends React.Component {
   constructor(props) {
     super(props);
-    // this.nameInput = React.createRef();
-    // this.quantityInput = React.createRef();
-    // this.priceInput = React.createRef();
+    this.nameInput = React.createRef();
+    this.quantityInput = React.createRef();
+    this.priceInput = React.createRef();
     // this.handleClickEnter = this.handleClickEnter.bind(this);
   }
   state = {
@@ -75,20 +78,28 @@ class NewProduct extends React.Component {
     quantity: '',
     price: '',
     errorMessage:'',
-    // focus:'name'
     loading: false,
     success: false,
   };
   componentDidMount = () => {
   }
+
   handleChange = name => event => {
-    const value = event.target.value
-    this.setState({ [name]: value })
+    const persian = /^[\u0600-\u06FF\s0-9]+$/;
+    const number = /^[0-9]*$/;
+    const value = event.target.value;
+
     switch (name) {
         case 'name':
+        if (!persian.test(value)&& value!=='') {
+          return
+         }
+        // this.setState({  })
         this.setState(
-          {pristan:
-            {nameStatus:false,
+          {[name]: value,
+            pristan:
+            {
+              nameStatus:false,
             quantityStatus:true,
             priceStatus:true
           },
@@ -96,7 +107,8 @@ class NewProduct extends React.Component {
         break;
         case 'quantity':
         this.setState(
-          {pristan:
+          {[name]: value,
+            pristan:
             {quantityStatus:false,
               nameStatus:true,
               priceStatus:true
@@ -104,8 +116,12 @@ class NewProduct extends React.Component {
           })
         break;
         case 'price':
+        if (!number.test(value)&& value!=='') {
+          return
+         }
         this.setState(
-          {pristan:
+          {[name]: value,
+            pristan:
             {priceStatus:false,
               nameStatus:true,
               quantityStatus:true,
@@ -136,65 +152,31 @@ class NewProduct extends React.Component {
     }
 
     this.props.selectedRowChange(product);
-    // if (!this.props.loading) {
-    //   this.setState({ open: false });      
-    // }
   }
-
-  handleButtonClick = () => {
-    if (!this.state.loading) {
-      this.setState(
-        {
-          success: false,
-          loading: true,
-        },
-        () => {
-          this.timer = setTimeout(() => {
-            this.setState({
-              loading: false,
-              success: true,
-            });
-          }, 2000);
-        },
-      );
-    }
-  };
 
   handleClickOpen = () => {
     this.setState({ open: true });
   };
 
   handleClickEnter= name => event => {
-    console.log(`Pressed keyCode ${event.key} , `,name);
-
-
-
-    // const p=/^[\u0600-\u06FF\s]+$/;
-    // if( p.test(event.key)){
-    //   console.log('event.key',event.key);
-    //   return false;
-    // }
-
-
     if (event.key === 'Enter') {
-      // switch (name) {
-      //   case 'name':
-      //   this.textInput.current.focus();
-      //     break;
-      //     case 'quantity':
-      //     this.quantityInput.current.focus();
-      //       break;
-      //       case 'price':
-      //       this.priceInput.current.focus();
-      //         break;
+      switch (name) {
+        case 'name':
+        this.nameInput.current.focus();
+          break;
+          case 'quantity':
+          this.quantityInput.current.focus();
+            break;
+            case 'price':
+            this.priceInput.current.focus();
+              break;
+              case 'save':
+              this.clickSubmit();
+                break;
       
-      //   default:
-      //     break;
-      // }
-      // this.setState({ focus: name });
-      // console.log('this.state.focus',this.state.focus);
-      // Do code here
-      event.preventDefault();
+        default:
+          break;
+      }
     }
   }
 
@@ -228,7 +210,7 @@ class NewProduct extends React.Component {
                                   }
                                 }}
                                 onKeyPress={this.handleClickEnter('quantity')}
-                                // inputRef={this.nameInput} 
+                                inputRef={this.nameInput} 
                                 autoFocus
                                 required
                                 error={this.state.name==='' && !this.state.pristan.nameStatus}
@@ -248,8 +230,7 @@ class NewProduct extends React.Component {
                                   }
                                 }}
                                 onKeyPress={this.handleClickEnter('price')}
-                                // inputRef={this.quantityInput} 
-                                // autoFocus={(this.state.focus==='quantity')?true:false}
+                                inputRef={this.quantityInput} 
                                 error={this.state.quantity==='' && !this.state.pristan.quantityStatus} 
                                 margin="dense"
                                 id="quantity"
@@ -265,9 +246,8 @@ class NewProduct extends React.Component {
                                         left:"auto"
                                     }
                                   }}        
-                                onKeyPress={this.handleClickEnter('price')}
-                                // inputRef={this.priceInput} 
-                                // autoFocus={(this.state.focus==='price')?true:false}
+                                onKeyPress={this.handleClickEnter('save')}
+                                inputRef={this.priceInput} 
                                 required
                                 error={this.state.price==='' && !this.state.pristan.priceStatus}
                                 margin="dense"
@@ -280,23 +260,20 @@ class NewProduct extends React.Component {
                                 />
                             </DialogContent>
                         <DialogActions>
-                            {/* <Button onClick={this.handleClose} color="primary">
+                            <Button onClick={this.handleClose} color="primary">
                             انصراف
                             </Button>
-                            <Button color="primary" variant="raised" onClick={this.clickSubmit} className={classes.submit}>
-                            ذخیره
-                            </Button> */}
                              <div className={classes.wrapper}>
                               <Button
-                                // variant="fl"
-                                color="primary"
+                                variant="contained"
+                                // color="primary"
                                 className={buttonClassname}
-                                disabled={this.props.loading}
+                                disabled={this.props.isLoading}
                                 onClick={this.clickSubmit}
                               >
-                                Accept terms
+                                ذخیره
                               </Button>
-                              {this.props.loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                              {this.props.isLoading && <CircularProgress size={24} className={classes.buttonProgress} />}
                             </div>
                         </DialogActions>
                 </Dialog>
@@ -304,11 +281,15 @@ class NewProduct extends React.Component {
     );
   }
 }
-
+function mapStateToProps(state) {
+  return {
+    isLoading: getLoading(state),
+  };
+}
 NewProduct.propTypes = {
   classes: PropTypes.object.isRequired,
   selectedRowChange: PropTypes.func.isRequired,
-  isLoading:PropTypes.bool.isRequired,
+  isLoading:PropTypes.bool,
 };
 
-export default withStyles(styles)(NewProduct)
+export default connect(mapStateToProps)(withStyles(styles)(NewProduct))

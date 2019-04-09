@@ -12,10 +12,10 @@ export function addCustomers(customers) {
   };
 }
 
-export function fetchCustomers() {
+export function fetchCustomers(value) {
   return (dispatch) => {
-    return customerList().then(res => {
-      dispatch(addCustomers(res));
+    return customerList(value).then(res => {
+      dispatch(addCustomers(res.customers));
     });
   };
 }

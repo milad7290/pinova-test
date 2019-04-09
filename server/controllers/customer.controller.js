@@ -6,8 +6,10 @@ import {
 import assert from 'assert';
 
 const List = (req, res) => {
+  const search = req.params.search;  
   let customers = [];
-  mdb.collection('customers').find({})
+  var regex = new RegExp(".*" + search + ".*", "g");
+  mdb.collection('customers').find({name: regex})
     .each((err, customer) => {
       assert.equal(null, err);
 

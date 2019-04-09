@@ -4,8 +4,10 @@ import { withStyles } from 'material-ui/styles';
 import Snackbar from 'material-ui/Snackbar';
 import IconButton from 'material-ui/IconButton';
 import CloseIcon from 'material-ui-icons/Close';
-import WarningIcon from 'material-ui-icons/Warning';
+import WarningIcon from '@material-ui/icons/Warning';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import amber from 'material-ui/colors/amber';
+import green from 'material-ui/colors/green';
 import SnackbarContent from 'material-ui/Snackbar/SnackbarContent';
 const styles = theme => ({
   close: {
@@ -13,6 +15,9 @@ const styles = theme => ({
   },
   warning: {
     backgroundColor: amber[700],
+  },
+  success: {
+    backgroundColor: green[600],
   },
   icon: {
     fontSize: 20,
@@ -54,11 +59,11 @@ class SimpleSnackbar extends React.Component {
           onClose={this.handleClose}
           >
           <SnackbarContent
-          className={classes.warning}
+          className={(this.props.messageType==='war')?classes.warning:classes.success}
           aria-describedby="client-snackbar"
           message={
             <span id="client-snackbar" className={classes.message}>
-              <WarningIcon/>
+              {(this.props.messageType==='war')?(<WarningIcon/>):(<CheckCircleIcon/>)}
               {this.props.message}
             </span>
           }
@@ -84,7 +89,8 @@ SimpleSnackbar.propTypes = {
   classes: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
   message: PropTypes.string.isRequired,
-  close: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired,
+  messageType:PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(SimpleSnackbar);

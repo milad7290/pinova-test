@@ -13,12 +13,13 @@ import AddCircle  from 'material-ui-icons/AddCircle'
 import RemoveCircle  from 'material-ui-icons/RemoveCircle'
 import InputLabel from 'material-ui/Input/InputLabel';
 import FormControl from 'material-ui/Form/FormControl';
-import Select from 'material-ui/Select';
-import TextField from 'material-ui/TextField';
+import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
 import NewProduct from '../../product/NewProduct'
 import { connect } from 'react-redux';
 import { fetchProducts,addProductRequest } from '../../product/productActions';
 import { getProducts } from '../../product/productReducer';
+import SimpleSnackbar from '../../helper/SimpleSnackbar'
 import {numberWithoutCommas} from '../../helper/persianNumber'
 
 const styles = theme => ({
@@ -36,12 +37,15 @@ const styles = theme => ({
     },
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    margin:0,
+    display: 'flex',
+    // marginLeft: theme.spacing.unit,
+    // marginRight: theme.spacing.unit,
     width: 100,
   },
   formControl: {
-    margin: theme.spacing.unit,
+    display: 'flex',
+    margin: 0,
     width: 120,
   },
   rTable :{
@@ -68,13 +72,18 @@ rTableHead:{
   backgroundColor:'#DDD',
 },
 rTableCell:{
+  margin:0,
   display: 'inline-block',
   height: 40,
   textAlign: 'center',
   padding: '2%',
   width: '16%',
 }
-, rTableHead :{
+,
+flexElement: {
+  display: 'flex !important',
+},
+rTableHead :{
   backgroundColor:'black',
   color:'white',
   	display: 'inline-block',
@@ -101,6 +110,9 @@ class InvoiceItems extends Component {
     rows:[],
     selectedProduct:'',
     productAdded:false,
+    open:false,
+    message:'',
+    messageType:'',
   }
   componentDidMount = () => {
     this.props.dispatch(fetchProducts());
@@ -108,6 +120,7 @@ class InvoiceItems extends Component {
       productId:'0',
       productName:'',
       count:1,
+      countRef:React.createRef(),
       price:null,
       totalPrice:null}
       if (this.props.rows.length===0) {
@@ -118,6 +131,11 @@ class InvoiceItems extends Component {
   }
   handlepProductIdChange = productId => {
     this.state.selectedProduct=productId.toString();
+  };
+  handleClose = () => {
+    this.setState({
+      open:false,
+    });
   };
   getIndex = productId => {
     const index= this.state.rows.findIndex(x=>x.productId=== productId);
@@ -136,14 +154,23 @@ class InvoiceItems extends Component {
     this.state.rows[index].price=this.props.products.find(x=>x._id===value).price;
     this.state.rows[index].totalPrice=this.state.rows[index].price * this.state.rows[index].count;
     this.setState({rows: this.state.rows });
-    this.props.updateTableDate(this.state.rows)
+    this.props.updateTableDate(this.state.rows);
+    console.log(this.state.rows,this.state.rows[index].countRef.current);
+    this.state.rows[index].countRef.current.focus();
+    if (index===this.state.rows.length-1) {  
     this.handleClickNewRow();
+  }
   };
   selectedRowProductChange = (product) => {
     let addedProduct;
     this.setState({productAdded: true });
    this.props.dispatch(addProductRequest(product)).then(res=>{
-    this.setState({productAdded: false });
+    this.setState(
+      {productAdded: false ,
+        open:true,
+        message:'محصول با موفقیت اضافه شد',
+        messageType:'suc',
+      });
     addedProduct=res.product;
     const index= this.state.rows.findIndex(x=>x.productId=== this.state.selectedProduct); 
     this.setState({ [index]: addedProduct._id });
@@ -153,7 +180,9 @@ class InvoiceItems extends Component {
     this.state.rows[index].totalPrice=this.state.rows[index].price * this.state.rows[index].count;
     this.setState({rows: this.state.rows });
     this.props.updateTableDate(this.state.rows);
-    this.handleClickNewRow();
+      if (index===this.state.rows.length-1) {  
+        this.handleClickNewRow();
+      }
    });
   };
   handleCountChange = name => event => {
@@ -167,11 +196,25 @@ class InvoiceItems extends Component {
     this.state.rows[index].totalPrice=this.state.rows[index].price * this.state.rows[index].count;
   };
    handleClickNewRow = () => {
+    //  if (index!==this.state.rows.length-1) {
+    //    console.log('index',index,this.state.rows.length-1)
+    //    return
+    //  }
     const productId=this.state.rows[this.state.rows.length-1].productId;
+    if (!this.state.rows[this.state.rows.length-1].price) {
+      this.setState(
+        {
+          open:true,
+          message:'برای اضافه کردن سطر جدید، اطلاعات ردیف را کامل کنید',
+          messageType:'war',
+        });
+      return;
+    }
     const newRow={
       productId:productId+0,
       productName:'',
       count:1,
+      countRef:React.createRef(),
       price:null,
       totalPrice:null};
       this.state.rows.push(newRow); 
@@ -206,7 +249,7 @@ class InvoiceItems extends Component {
                               <div className={classes.rTableCell}>
                               <div 
                               className={classes.addProduct} 
-                              container >
+                               >
                                 <div >
                                 <NewProduct isLoading={this.state.productAdded}  selectedRowChange={this.selectedRowProductChange} />
                                 </div>
@@ -237,10 +280,11 @@ class InvoiceItems extends Component {
                               <div className={classes.rTableCell}>
                               <TextField
                                         id="standard-number"
-                                        label="Count"
+                                        label="تعداد"
                                         value={this.state.count}
                                         onChange={this.handleCountChange(row.productId.toString())}
                                         type="number"
+                                        inputRef={row.countRef} 
                                         defaultValue={1}
                                         className={classes.textField}
                                         InputLabelProps={{
@@ -250,12 +294,15 @@ class InvoiceItems extends Component {
                                           name: row.productId.toString(),
                                         }}
                                         margin="normal"
+                                        classes={{
+                                          root: classes.flexElement,
+                                        }}
                                       />
                               </div>
                               <div className={classes.rTableCell}>{ numberWithoutCommas(row.price)}</div>
                               <div className={classes.rTableCell}>{ numberWithoutCommas(row.totalPrice)}</div>
                               <div className={classes.rTableCell}>
-                              <div className={classes.addProduct} container >
+                              <div className={classes.addProduct}  >
                                 
                                 { (this.state.rows.length-1===this.getIndex(row.productId) )?    
                                                         
@@ -276,7 +323,10 @@ class InvoiceItems extends Component {
                                   (<div >  
                                     </div> )
                                 }                         
-                                                    
+                                     <div>
+                                            <SimpleSnackbar open={this.state.open} close={this.handleClose}
+                                            message={this.state.message} messageType={this.state.messageType}/>
+                                     </div>               
                               </div>
                       
                               </div>
@@ -290,7 +340,7 @@ class InvoiceItems extends Component {
 InvoiceItems.need = [() => { return fetchProducts(); }];
 function mapStateToProps(state) {
   return {
-    products: getProducts(state),
+    products: (getProducts(state))?getProducts(state):[],
   };
 }
 InvoiceItems.propTypes = {

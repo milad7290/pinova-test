@@ -1,6 +1,6 @@
 
-const customerList = () => {
-  return fetch('/api/customers/', {
+const customerList = (value) => {
+  return fetch('/api/customers/'+value, {
     method: 'GET',
   }).then(response => {
     return response.json()

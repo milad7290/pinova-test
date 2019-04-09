@@ -1,6 +1,7 @@
 import {productList,create} from './api-product'
 
 export const ADD_PRODUCT = 'ADD_PRODUCT';
+export const SET_LOADING = 'SET_LOADING';
 export const ADD_PRODUCTS = 'ADD_PRODUCTS';
 
 export function addProduct(product) {
@@ -9,11 +10,21 @@ export function addProduct(product) {
     product,
   };
 }
-
+export function setLoading(isLoading=false) {
+  return {
+    type: SET_LOADING,
+    isLoading,
+  };
+}
 export function addProductRequest(product) {
   return (dispatch) => {
+    dispatch( setLoading(true))
     return create(product)
-    .then(res => dispatch(addProduct(res.addedProduct)));
+    .then(res =>{ 
+      dispatch(setLoading(false))
+      return dispatch(addProduct(res.addedProduct)
+      )
+    });
   };
 }
 

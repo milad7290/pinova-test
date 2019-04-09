@@ -2,6 +2,7 @@ import {invoiceListWithFilter,create} from './api-invoice'
 
 export const ADD_INVOICE = 'ADD_INVOICE';
 export const ADD_INVOICES = 'ADD_INVOICES';
+export const SET_LOADING = 'SET_LOADING';
 export const ADD_INVOICES_CONCAT = 'ADD_INVOICES_CONCAT';
 
 export function addInvoice(invoice) {
@@ -10,11 +11,20 @@ export function addInvoice(invoice) {
     invoice,
   };
 }
-
+export function setLoading(isLoading=false) {
+  return {
+    type: SET_LOADING,
+    isLoading,
+  };
+}
 export function addInvoiceRequest(invoice) {
   return (dispatch) => {
+    dispatch( setLoading(true))
     return create(invoice)
-    .then(res => dispatch(addInvoice(res.addedInvoice)));
+    .then(res => 
+      {dispatch(setLoading(false))
+       return( dispatch(addInvoice(res.addedInvoice))
+       )});
   };
 }
 

@@ -101,7 +101,7 @@ class InvoiceReport extends React.Component {
   };
   componentDidMount = () => {
     window.addEventListener('scroll', this.handleOnScroll);
-    const params={from:'notSet',to:'notSet',page:0,offset:(this.state.filterType==='factorItems'?10:12)}
+    const params={from:'notSet',to:'notSet',page:0,offset:(this.state.filterType==='factorItems'?20:25)}
     this.props.dispatch(fetchInvoices(params));     
   }
   
@@ -132,7 +132,7 @@ class InvoiceReport extends React.Component {
   handleSearch=()=>{
     this.setState({ filterTypeToSearch: this.state.filterType ,
       pageNumber:0 });
-    const params={from:this.state.fromDate,to:this.state.toDate,page:0,offset:(this.state.filterType==='factorItems'?10:12)}
+    const params={from:this.state.fromDate,to:this.state.toDate,page:0,offset:(this.state.filterType==='factorItems'?20:25)}
     this.props.dispatch(fetchInvoices(params));
   }
   invoiceItems=()=>{
