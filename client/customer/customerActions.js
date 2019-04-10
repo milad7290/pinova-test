@@ -15,6 +15,9 @@ export function addCustomers(customers) {
 export function fetchCustomers(value) {
   return (dispatch) => {
     return customerList(value).then(res => {
+      // if (res.err) {
+      //   dispatch( setError(true))
+      // }
       dispatch(addCustomers(res.customers));
     });
   };

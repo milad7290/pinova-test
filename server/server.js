@@ -8,8 +8,6 @@ let mdb;
 MongoClient.connect(config.mongoUri, {
   useNewUrlParser: true
 }, (err, db) => {
-  assert.equal(null, err);
-
   mdb = db;
 });
 

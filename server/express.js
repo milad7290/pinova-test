@@ -42,6 +42,10 @@ app.use('/', invoiceRoutes)
 app.get('*', (req, res) => {
    const sheetsRegistry = new SheetsRegistry()
    const theme = createMuiTheme({
+    typography: {
+      useNextVariants: true,
+      fontFamily: '"IranSans"',
+    },
      direction: 'rtl',
      palette: {
        primary: {

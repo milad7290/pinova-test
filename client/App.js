@@ -7,7 +7,8 @@ import { hot } from 'react-hot-loader'
 import { Provider } from 'react-redux';
 import PropTypes from 'prop-types';
 const theme = createMuiTheme({
-  typography: {
+     direction: 'rtl',
+     typography: {
     useNextVariants: true,
     fontFamily: '"IranSans"',
   },

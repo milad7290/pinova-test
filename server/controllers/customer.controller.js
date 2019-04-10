@@ -6,24 +6,31 @@ import {
 import assert from 'assert';
 
 const List = (req, res) => {
-  const search = req.params.search;  
-  let customers = [];
-  var regex = new RegExp(".*" + search + ".*", "g");
-  mdb.collection('customers').find({name: regex})
-    .each((err, customer) => {
-      assert.equal(null, err);
-
-      if (!customer) { // no more customers
-        res.send({
-          customers
-        });
-        return;
-      }
-
-      customers.push(
-        {'label': customer.name
-        ,'value':customer._id});
-    });
+  try {
+    const search = req.params.search;  
+    let customers = [];
+    var regex = new RegExp(".*" + search + ".*", "g");
+    mdb.collection('customers').find({name: regex})
+      .each((err, customer) => {
+        if (err) {
+          res.status(404).send({err:err});
+          return;
+        }
+        if (!customer) { // no more customers
+          res.send({
+            customers
+          });
+          return;
+        }
+  
+        customers.push(
+          {'label': customer.name
+          ,'value':customer._id});
+      });
+  } catch (error) {
+    console.log('error',error)
+  }
+ 
 }
 
 
