@@ -78,20 +78,91 @@ class NewInvoiceStepper extends React.Component {
     message:'',
     messageType:'',
   };
+  // onBackButtonEvent=(e) => {
+  //   e.preventDefault();
+  //  console.log('baaaack');
+  // }
   componentDidMount = () => {
+    // window.onpopstate  = (e) => {
+    //   e.preventDefault();
+    // }
+    window.onpopstate = (event)=> {
+      console.log('event',event);
+      if (this.state.activeStep===1) {
+        this.setState(state => ({
+          activeStep: state.activeStep - 1,
+        }));
+      }
+      // history.go(0);
+    };
     getNextInvoiceNumber().then((data) => {
       this.setState(
-        {step1Data: {invoiceNumber: data.order,invoiceCustomer:'',invoiceRows:[]},
-        step2Data:{address:{state:'',city:''},postType:'',deliveryDate:{timeAmount:0,timeType:''}}
+        {
+         step1Data: {invoiceNumber: data.order,invoiceCustomer:'',invoiceCustomerId:'',invoiceRows:[]},
+         step2Data:{address:{state:'',city:''},postType:'',deliveryDate:{timeAmount:0,timeType:''}}
       })
     })
+
+
   }
+  handleUpdateCustomer= (value,id) => {
+    const step1={...this.state.step1Data}
+    step1.invoiceCustomer=value;
+    step1.invoiceCustomerId=id;
+    this.setState(
+      {step1Data:step1})
+   }
+   handleUpdateRows= (value)=> {
+    const step1={...this.state.step1Data}
+    step1.invoiceRows=value;
+    this.setState(
+      {step1Data:step1})
+   }
+   handleStateChange = value => {
+    const step2={...this.state.step2Data}
+    step2.address.state=value;
+    this.setState(
+      {step2Data:step2})
+  };
+  handleCityChange = value  => {
+    const step2={...this.state.step2Data}
+    step2.address.city=value;
+    this.setState(
+      {step2Data:step2})
+  };
+  handlePostTypeChange = value  => {
+    const step2={...this.state.step2Data}
+    step2.postType=value;
+    this.setState(
+      {step2Data:step2})
+  };
+  handleTimeTypeChange = value  => {
+    const step2={...this.state.step2Data}
+    step2.deliveryDate.timeType=value;
+    this.setState(
+      {step2Data:step2})
+  };
+  handleTimeAmountChange = value  => {
+    const step2={...this.state.step2Data}
+    step2.deliveryDate.timeAmount=value;
+    this.setState(
+      {step2Data:step2})
+  };
  getStepContent=(stepIndex) =>{
     switch (stepIndex) {
       case 0:
-        return (<NewInvoiceStep1 step1Data={this.state.step1Data}/>);
+        return (<NewInvoiceStep1 
+          updateCustomer={this.handleUpdateCustomer}
+          updateRows={this.handleUpdateRows}
+          step1Data={this.state.step1Data}/>);
       case 1:
-      return (<NewInvoiceStep2 step2Data={this.state.step2Data}/>);
+      return (<NewInvoiceStep2
+          updateState={this.handleStateChange}
+          updateCity={this.handleCityChange}
+          updatePostType={this.handlePostTypeChange}
+          updateTimeType={this.handleTimeTypeChange}
+          updateTimeAmount={this.handleTimeAmountChange}
+          step2Data={this.state.step2Data}/>);
       default:
         return 'Unknown stepIndex';
     }
@@ -161,14 +232,14 @@ class NewInvoiceStepper extends React.Component {
       }
       this.props.dispatch(addInvoiceRequest(invoice)).then(res=>{
         this.setState({
-          open: true ,
-          messageType:'suc',
-          message:'فاکتور با موفقیت اضافه شد',
-          message:'',
+          // open: true ,
+          // messageType:'suc',
+          // message:'فاکتور با موفقیت اضافه شد',
           redirect:true,
         })
       });
     } else{
+    history.pushState(null, null, location.href);
       this.setState(state => ({
         activeStep: state.activeStep + 1,
       }));
@@ -210,7 +281,7 @@ class NewInvoiceStepper extends React.Component {
           ))}
         </Stepper>
         <div>
-          {this.state.activeStep === steps.length ? (
+          {activeStep === steps.length ? (
             <div>
               <Typography className={classes.instructions}>مراحل تکمیل شد</Typography>
             </div>

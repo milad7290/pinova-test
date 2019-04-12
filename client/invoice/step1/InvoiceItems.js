@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper';
@@ -87,7 +87,7 @@ rTableHead :{
   	width: '20%',
 }
 })
-class InvoiceItems extends Component {
+class InvoiceItems extends PureComponent {
   state={
     rows:[],
     selectedProduct:'',
@@ -106,7 +106,9 @@ class InvoiceItems extends Component {
       price:null,
       totalPrice:null}
       if (this.props.rows.length===0) {
-      this.state.rows.push(firstRow);         
+        let rows=[...this.state.rows]
+        rows.push(firstRow);       
+        this.setState({rows: rows });
       } else{
         this.setState({rows: this.props.rows });
       }            
@@ -128,14 +130,21 @@ class InvoiceItems extends Component {
     const index= this.state.rows.findIndex(x=>x.productId=== name);
     const ifExist= this.state.rows.findIndex(x=>x.productId=== value);
     if (ifExist!==-1) {
+      this.setState(
+        {
+          open:true,
+          message:'این کالا قبلا انتخاب شده است!',
+          messageType:'war',
+        });
       return;
     }
     this.setState({ [name]: value });
-    this.state.rows[index].productId=value;
-    this.state.rows[index].productName=this.props.products.find(x=>x._id===value).name;
-    this.state.rows[index].price=this.props.products.find(x=>x._id===value).price;
-    this.state.rows[index].totalPrice=this.state.rows[index].price * this.state.rows[index].count;
-    this.setState({rows: this.state.rows });
+    let rows=[...this.state.rows]
+    rows[index].productId=value;
+    rows[index].productName=this.props.products.find(x=>x._id===value).name;
+    rows[index].price=this.props.products.find(x=>x._id===value).price;
+    rows[index].totalPrice=rows[index].price * rows[index].count;
+    this.setState({rows: rows });
     this.props.updateTableDate(this.state.rows);
     console.log(this.state.rows,this.state.rows[index].countRef.current);
     this.state.rows[index].countRef.current.focus();
@@ -156,11 +165,12 @@ class InvoiceItems extends Component {
     addedProduct=res.product;
     const index= this.state.rows.findIndex(x=>x.productId=== this.state.selectedProduct); 
     this.setState({ [index]: addedProduct._id });
-    this.state.rows[index].productName=addedProduct.name;
-    this.state.rows[index].productId=addedProduct._id;
-    this.state.rows[index].price=addedProduct.price;
-    this.state.rows[index].totalPrice=this.state.rows[index].price * this.state.rows[index].count;
-    this.setState({rows: this.state.rows });
+    let rows=[...this.state.rows]
+    rows[index].productName=addedProduct.name;
+    rows[index].productId=addedProduct._id;
+    rows[index].price=addedProduct.price;
+    rows[index].totalPrice=rows[index].price * rows[index].count;
+    this.setState({rows: rows });
     this.props.updateTableDate(this.state.rows);
       if (index===this.state.rows.length-1) {  
         this.handleClickNewRow();
@@ -174,14 +184,12 @@ class InvoiceItems extends Component {
       return
     }
     this.setState({ [name]: event.target.value });
-    this.state.rows[index].count=value;
-    this.state.rows[index].totalPrice=this.state.rows[index].price * this.state.rows[index].count;
+    let rows=[...this.state.rows]
+    rows[index].count=value;
+    rows[index].totalPrice=rows[index].price * rows[index].count;
+    this.setState({rows: rows });
   };
    handleClickNewRow = () => {
-    //  if (index!==this.state.rows.length-1) {
-    //    console.log('index',index,this.state.rows.length-1)
-    //    return
-    //  }
     const productId=this.state.rows[this.state.rows.length-1].productId;
     if (!this.state.rows[this.state.rows.length-1].price) {
       this.setState(
@@ -199,16 +207,18 @@ class InvoiceItems extends Component {
       countRef:React.createRef(),
       price:null,
       totalPrice:null};
-      this.state.rows.push(newRow); 
-      this.setState({rows: this.state.rows });
+      let rows=[...this.state.rows]
+      rows.push(newRow); 
+      this.setState({rows: rows });
       this.props.updateTableDate(this.state.rows)
 
   }
 
   handleClickRemoveRow = productId => {
-    const index= this.state.rows.findIndex(x=>x.productId=== productId); 
-    this.state.rows.splice(index,1);
-    this.setState({rows: this.state.rows });
+    let rows=[...this.state.rows]
+    const index= rows.findIndex(x=>x.productId=== productId); 
+    rows.splice(index,1);
+    this.setState({rows: rows });
     this.props.updateTableDate(this.state.rows)
    }
   render() {

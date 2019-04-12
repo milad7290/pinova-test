@@ -59,7 +59,7 @@ const styles = theme => ({
   },
 });
 
-class NewProduct extends React.Component {
+class NewProduct extends React.PureComponent {
   constructor(props) {
     super(props);
     this.nameInput = React.createRef();

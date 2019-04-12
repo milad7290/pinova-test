@@ -74,14 +74,6 @@ function getSuggestions(value,suggestions) {
       });
 }
 
-// function getSuggestionValue(suggestion) {
-//   console.log('this is ',suggestion.value);
-//   this.setState({
-//     selectedCustomerId:suggestion.value
-//   });
-//   return suggestion.label;
-// }
-
 const styles = theme => ({
   root: {
     height: 50,
@@ -110,11 +102,10 @@ const styles = theme => ({
   },
 });
 
-class IntegrationAutosuggest extends React.Component {
+class IntegrationAutosuggest extends React.PureComponent {
   state = {
     single: '',
     popper: '',
-    selectedCustomerId:'',
     suggestions: [],
   };
    getSuggestionValue=(suggestion)=> {
@@ -150,6 +141,7 @@ class IntegrationAutosuggest extends React.Component {
     this.setState({
       [name]: newValue,
     });
+    // this.props.getInputData(newValue,this.props.state);
   };
 
   render() {

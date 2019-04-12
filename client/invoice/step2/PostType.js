@@ -21,7 +21,7 @@ const styles = theme => ({
   },
 });
 
-class PostType extends React.Component {
+class PostType extends React.PureComponent {
   state = {
     value: 'normal',
   };

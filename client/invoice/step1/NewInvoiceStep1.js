@@ -14,15 +14,6 @@ class NewInvoiceStep1 extends Component {
   state={
     now :(new Date()).toDateString(),
   }
-
-  getAutosuggestInput= (value,id) => {
-    console.log('value',value,'id',id);
-    this.props.step1Data.invoiceCustomer=value;
-    this.props.step1Data.invoiceCustomerId=id;
-   }
-   getTableData= (value) => {
-    this.props.step1Data.invoiceRows=value;
-   }
   render() {
     const {classes} = this.props
     return (
@@ -40,11 +31,10 @@ class NewInvoiceStep1 extends Component {
       </div>
       <br/>
       <div >
-      <IntegrationAutosuggest   getInputData={this.getAutosuggestInput} customer={this.props.step1Data.invoiceCustomer}/>
-      {/* <IntegrationAutosuggestV2   getInputData={this.getAutosuggestInput} customer={this.props.step1Data.invoiceCustomer}/> */}
+      <IntegrationAutosuggest   getInputData={this.props.updateCustomer} customer={this.props.step1Data.invoiceCustomer}/>
       </div>
           <div>
-          <InvoiceItems   updateTableDate={this.getTableData} rows={this.props.step1Data.invoiceRows}/>
+          <InvoiceItems   updateTableDate={this.props.updateRows} rows={this.props.step1Data.invoiceRows}/>
           </div>
        
         </CardContent>
@@ -54,7 +44,9 @@ class NewInvoiceStep1 extends Component {
 }
 NewInvoiceStep1.propTypes = {
   classes: PropTypes.object.isRequired,
-  step1Data:PropTypes.object.isRequired
+  step1Data:PropTypes.object.isRequired,
+  updateCustomer:PropTypes.func.isRequired,
+  updateRows:PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(NewInvoiceStep1)

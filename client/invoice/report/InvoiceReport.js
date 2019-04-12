@@ -115,7 +115,10 @@ class InvoiceReport extends React.Component {
     const scrolledToBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
 
     if (scrolledToBottom) {
-      this.setState({pageNumber:this.state.pageNumber++});
+
+      let state={...this.state};
+      const page=state.pageNumber+1;
+      this.setState({pageNumber:page});
       this.loadMore();
     }
   }
@@ -153,7 +156,7 @@ class InvoiceReport extends React.Component {
     return items;
   }
   loadMore=()=>{
-    const params={from:'notSet',to:'notSet',page:++this.state.pageNumber,offset:(this.state.filterType==='factorItems'?10:12)}
+    const params={from:'notSet',to:'notSet',page:this.state.pageNumber,offset:(this.state.filterType==='factorItems'?20:25)}
     this.props.dispatch(fetchInvoices(params));
    }
   render() {

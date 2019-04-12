@@ -48,15 +48,37 @@ const create = (req, res) => {
     default:
       break;
   }
-  // mdb.collection('customers')
-  //   .findOne({
-  //     name: invoiceCustomer,
-  //   })
-  //   .then(customer => {
-    console.log('invoiceCustomerId',invoiceCustomerId)
-      if (invoiceCustomerId && invoiceCustomerId!=='') {
+  console.log('invoiceCustomerId', invoiceCustomerId)
+  if (invoiceCustomerId && invoiceCustomerId !== '') {
+    mdb.collection('invoices').insertOne({
+      customerId: new ObjectID(invoiceCustomerId),
+      invoiceNumber: invoiceNumber,
+      invoiceCustomer: invoiceCustomer,
+      invoiceRows: invoiceRows,
+      totalPrice: totalPrice,
+      address: address,
+      postType: postType,
+      deliveryDate: now,
+      createdDate: new Date()
+    }, (err, response) => {
+      if (err) {
+        console.error(err);
+        res.status(404).send({
+          error: 'Bad Request'
+        });
+      } else {
+        res.send({
+          addedInvoice: response.ops[0],
+        })
+      }
+    })
+  } else {
+    mdb.collection('customers').insertOne({
+        name: invoiceCustomer,
+        createdDate: new Date()
+      }).then(result => {
         mdb.collection('invoices').insertOne({
-          customerId: new ObjectID(invoiceCustomerId),
+          customerId: result.ops[0]._id,
           invoiceNumber: invoiceNumber,
           invoiceCustomer: invoiceCustomer,
           invoiceRows: invoiceRows,
@@ -77,56 +99,12 @@ const create = (req, res) => {
             })
           }
         })
-      } else {
-        mdb.collection('customers').insertOne({
-            name: invoiceCustomer,
-            createdDate: new Date()
-          }).then(result =>
-           { 
-            mdb.collection('invoices').insertOne({
-              customerId: result.ops[0]._id,
-              invoiceNumber: invoiceNumber,
-              invoiceCustomer: invoiceCustomer,
-              invoiceRows: invoiceRows,
-              totalPrice: totalPrice,
-              address: address,
-              postType: postType,
-              deliveryDate: now,
-              createdDate: new Date()
-            }, (err, response) => {
-              if (err) {
-                console.error(err);
-                res.status(404).send({
-                  error: 'Bad Request'
-                });
-              } else {
-                res.send({
-                  addedInvoice: response.ops[0],
-                })
-              }
-            })
-          })
-          .catch(error => {
-            console.error(error);
-            res.status(404).send('Bad Request');
-          });
-      }
-    // })
-    // .catch(error => {
-    //   console.error(error);
-    //   res.status(404).send('Bad Request');
-    // });
-
-
-  // const invoice = new invoice(req.body.invoice)
-  // invoice.save((err, result) => {
-  //   if (err) {
-  //     return res.status(400).json({
-  //       error: errorHandler.getErrorMessage(err)
-  //     })
-  //   }
-  //   res.status(200).json(result)
-  // })
+      })
+      .catch(error => {
+        console.error(error);
+        res.status(404).send('Bad Request');
+      });
+  }
 }
 
 const ListWithFilter = (req, res) => {
@@ -137,9 +115,10 @@ const ListWithFilter = (req, res) => {
     mdb.collection('invoices').find({})
       .skip(page * offset).limit(offset)
       .each((err, invoice) => {
-        assert.equal(null, err);
 
-        if (!invoice) { // no more invoices
+
+        if (!invoice) {
+          console.log('page', page, 'offset', offset)
           res.send({
             invoices
           });
@@ -157,9 +136,7 @@ const ListWithFilter = (req, res) => {
         },
       }).skip(page * offset).limit(offset)
       .each((err, invoice) => {
-        assert.equal(null, err);
-
-        if (!invoice) { // no more invoices
+        if (!invoice) {
           res.send({
             invoices
           });
@@ -173,9 +150,9 @@ const List = (req, res) => {
   let invoices = [];
   mdb.collection('invoices').find({})
     .each((err, invoice) => {
-      assert.equal(null, err);
 
-      if (!invoice) { // no more invoices
+
+      if (!invoice) {
         res.send({
           invoices
         });
@@ -193,7 +170,7 @@ const getNextInvoiceNumber = (req, res) => {
       invoiceNumber: -1
     }).limit(1)
     .each((err, invoice) => {
-      assert.equal(null, err);
+
       order = (invoice) ?
         invoice.invoiceNumber + 1 :
         res.send({

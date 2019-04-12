@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card';
@@ -17,7 +17,7 @@ const styles = theme => ({
     minWidth: 100,
   },
 })
-class DeliveryTime extends Component {
+class DeliveryTime extends PureComponent {
   state={
     amount:'',
     selectedTime:'',

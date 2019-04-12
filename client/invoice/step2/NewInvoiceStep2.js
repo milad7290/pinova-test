@@ -11,38 +11,20 @@ class NewInvoiceStep2 extends Component {
   componentDidMount = () => {
  
   }
-
-  handleStateChange = value => {
-    this.props.step2Data.address.state=value;
-  };
-  handleCityChange = value  => {
-    this.props.step2Data.address.city=value;
-
-  };
-  handlePostTypeChange = value  => {
-    this.props.step2Data.postType=value;
-
-  };
-  handleTimeTypeChange = value  => {
-    this.props.step2Data.deliveryDate.timeType=value;
-  };
-  handleTimeAmountChange = value  => {
-    this.props.step2Data.deliveryDate.timeAmount=value;
-  };
   render() {
     const {classes} = this.props
     return (
 <div>
           <div>
-          <StateAndCity stateChange={this.handleStateChange} cityChange={this.handleCityChange} step2={this.props.step2Data}/>    
+          <StateAndCity stateChange={this.props.updateState} cityChange={this.props.updateCity} step2={this.props.step2Data}/>    
           </div>
      
           <div>
-          <PostType postTypeChange={this.handlePostTypeChange} step2={this.props.step2Data}/>    
+          <PostType postTypeChange={this.props.updatePostType} step2={this.props.step2Data}/>    
           </div>
 
           <div>
-          <DeliveryTime  timeTypeChange={this.handleTimeTypeChange} timeAmountChange={this.handleTimeAmountChange} step2={this.props.step2Data}/>
+          <DeliveryTime  timeTypeChange={this.props.updateTimeType} timeAmountChange={this.props.updateTimeAmount} step2={this.props.step2Data}/>
           </div>
 </div>
     )
@@ -51,8 +33,12 @@ class NewInvoiceStep2 extends Component {
 
 NewInvoiceStep2.propTypes = {
   classes: PropTypes.object.isRequired,
-  step2Data:PropTypes.object.isRequired
-
+  step2Data:PropTypes.object.isRequired,
+  updateState:PropTypes.func.isRequired,
+  updateCity:PropTypes.func.isRequired,
+  updatePostType:PropTypes.func.isRequired,
+  updateTimeType:PropTypes.func.isRequired,
+  updateTimeAmount:PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(NewInvoiceStep2)
