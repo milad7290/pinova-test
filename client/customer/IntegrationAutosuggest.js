@@ -105,11 +105,15 @@ const styles = theme => ({
 class IntegrationAutosuggest extends React.PureComponent {
   state = {
     single: '',
+    singleid: '',
     popper: '',
     suggestions: [],
   };
    getSuggestionValue=(suggestion)=> {
     this.props.getInputData(suggestion.label,suggestion.value);
+    // this.setState({      
+    //   singleid:suggestion.value ,
+    // });
     return suggestion.label;
   }
   componentDidMount = () => {
@@ -141,7 +145,7 @@ class IntegrationAutosuggest extends React.PureComponent {
     this.setState({
       [name]: newValue,
     });
-    // this.props.getInputData(newValue,this.props.state);
+    this.props.getInput(newValue);
   };
 
   render() {
@@ -194,6 +198,7 @@ IntegrationAutosuggest.propTypes = {
   customers: PropTypes.array,
   customer: PropTypes.string.isRequired,
   getInputData: PropTypes.func.isRequired,
+  getInput: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps)( withStyles(styles)(IntegrationAutosuggest));

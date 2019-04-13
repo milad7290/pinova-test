@@ -22,12 +22,12 @@ class Footer extends React.PureComponent {
   
       if (show) {
           return (
-        <footer>
-          <h6>this is footer</h6>
-          {/* <span>{ Math.round(score / total * 100) }%</span> */}
-        </footer>
-      )
-      } 
+            <footer>
+              <h6>this is footer</h6>
+              {/* <span>{ Math.round(score / total * 100) }%</span> */}
+            </footer>
+          )
+       } 
     }
   
   }

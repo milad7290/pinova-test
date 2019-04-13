@@ -31,7 +31,7 @@ class NewInvoiceStep1 extends Component {
       </div>
       <br/>
       <div >
-      <IntegrationAutosuggest   getInputData={this.props.updateCustomer} customer={this.props.step1Data.invoiceCustomer}/>
+      <IntegrationAutosuggest getInput={this.props.updateCustomerInput}  getInputData={this.props.updateCustomer} customer={this.props.step1Data.invoiceCustomer}/>
       </div>
           <div>
           <InvoiceItems   updateTableDate={this.props.updateRows} rows={this.props.step1Data.invoiceRows}/>
@@ -46,6 +46,7 @@ NewInvoiceStep1.propTypes = {
   classes: PropTypes.object.isRequired,
   step1Data:PropTypes.object.isRequired,
   updateCustomer:PropTypes.func.isRequired,
+  updateCustomerInput:PropTypes.func.isRequired,
   updateRows:PropTypes.func.isRequired,
 }
 

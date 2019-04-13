@@ -77,6 +77,7 @@ class NewInvoiceStepper extends React.Component {
     open:false,
     message:'',
     messageType:'',
+    input:''
   };
   // onBackButtonEvent=(e) => {
   //   e.preventDefault();
@@ -111,6 +112,12 @@ class NewInvoiceStepper extends React.Component {
     step1.invoiceCustomerId=id;
     this.setState(
       {step1Data:step1})
+   }
+   handleUpdateCustomerInput= (value) => {
+    // const step1={...this.state.step1Data}
+    // step1.invoiceCustomer=value;;
+    this.setState(
+      {input:value})
    }
    handleUpdateRows= (value)=> {
     const step1={...this.state.step1Data}
@@ -153,6 +160,7 @@ class NewInvoiceStepper extends React.Component {
       case 0:
         return (<NewInvoiceStep1 
           updateCustomer={this.handleUpdateCustomer}
+          updateCustomerInput={this.handleUpdateCustomerInput}
           updateRows={this.handleUpdateRows}
           step1Data={this.state.step1Data}/>);
       case 1:
@@ -181,14 +189,15 @@ class NewInvoiceStepper extends React.Component {
   }
   
   handleNext = () => {
+    console.log(this.state);
   const total= this.checkForRows();
   switch (this.state.activeStep) {
     case 0:
-     if (this.state.step1Data.invoiceCustomer===''||this.state.step1Data.invoiceRows.length===0 ) {
+     if (this.state.step1Data.invoiceRows.length===0 ||  this.state.input==='') {
       this.setState(
         { open: true ,
           messageType:'war',
-          message:(this.state.step1Data.invoiceCustomer==='')
+          message:(this.state.input==='')
           ?'اطلاعات مربوط به نام و نام خانوادگی را تکمیل کنید'
           :'اطلاعات مربوط به فاکتور را تکمیل کنید'
         });
@@ -222,8 +231,9 @@ class NewInvoiceStepper extends React.Component {
     if (this.state.activeStep === getSteps().length - 1) {
       const invoice={
         invoiceNumber:this.state.step1Data.invoiceNumber,
-        invoiceCustomer:this.state.step1Data.invoiceCustomer,
-        invoiceCustomerId:this.state.step1Data.invoiceCustomerId,
+        invoiceCustomer:this.state.input,
+        invoiceCustomerId:(this.state.input===this.state.step1Data.invoiceCustomer)
+        ?this.state.step1Data.invoiceCustomerId:'',
         invoiceRows:this.state.step1Data.invoiceRows,
         address:this.state.step2Data.address,
         postType:this.state.step2Data.postType,

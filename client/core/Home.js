@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card';
 import {Link} from 'react-router-dom'
 import Button from '@material-ui/core/Button'
+import Footer from './Footer'
 import withFooter from '../helper/withFooter'
 import Switch from '@material-ui/core/Switch';
 const styles = theme => ({
@@ -50,37 +51,34 @@ class Home extends Component {
     console.log('componentWillUnmount');
 
   }
-  // getSnapshotBeforeUpdate=(prevProps, prevState)=>{
-  //   console.log('getSnapshotBeforeUpdate',prevProps,prevState);
-  //   return null
-
-  // }
-  // static getDerivedStateFromProps=(props, state)=>{
-  //   console.log('getDerivedStateFromProps',props,state);
-  //   return null
-
-  // }
+  clickBtn=()=>{
+    this.setState({suggestionTitle:'assdsds'})
+  }
   render() {
     console.log('render');
     const {classes} = this.props
     return (
       <div>
-      <div>
-      <Card className={classes.card}>
-        <Grid  container spacing={0}>
-          <Grid item xs={6} sm={6}>
-                    <Link to="/invoice/addInvoice">
-          <Button >ثبت فاکتور جدید</Button>
-        </Link>
-          </Grid>
-          <Grid item xs={6} sm={6}>
-            <Link to="/invoice/report">
-          <Button >گزارش فروش</Button>
-        </Link>
-          </Grid>
-        </Grid>
-        </Card>
-      </div>
+          <div>
+          <Card className={classes.card}>
+            <Grid  container spacing={0}>
+              <Grid item xs={6} sm={6}>
+                        <Link to="/invoice/addInvoice">
+              <Button >ثبت فاکتور جدید</Button>
+            </Link>
+              </Grid>
+              <Grid item xs={6} sm={6}>
+                <Link to="/invoice/report">
+              <Button >گزارش فروش</Button>
+            </Link>
+              </Grid>
+            </Grid>
+            </Card>
+          </div>
+          <div >
+          <Button onClick={this.clickBtn} >click me</Button>
+          </div>
+          {/* <Footer show={true}/> */}
         </div>
     )
   }
@@ -137,10 +135,10 @@ export default  withStyles(styles)(Home)
 //     console.log('componentWillReceiveProps');
 
 //   }
-//   shouldComponentUpdate  = () => {
-//     console.log('shouldComponentUpdate');
-//       return true;
-//   }
+//   // shouldComponentUpdate  = () => {
+//   //   console.log('shouldComponentUpdate');
+//   //     return true;
+//   // }
 //   componentWillUpdate  = () => {
 //     console.log('componentWillUpdate');
 

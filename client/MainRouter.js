@@ -21,6 +21,7 @@ class MainRouter extends Component {
         <Route path="/invoice/addInvoice" component={NewInvoiceStepper}/>
         <Route path="/invoice/report" component={InvoiceReport}/>
       </Switch>
+      {/* <Footer show={true}/> */}
     </div>)
   }
 }

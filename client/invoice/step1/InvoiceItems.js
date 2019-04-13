@@ -219,7 +219,8 @@ class InvoiceItems extends PureComponent {
     const index= rows.findIndex(x=>x.productId=== productId); 
     rows.splice(index,1);
     this.setState({rows: rows });
-    this.props.updateTableDate(this.state.rows)
+    console.log(rows);
+    this.props.updateTableDate(rows)
    }
   render() {
     const {classes} = this.props
