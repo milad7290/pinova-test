@@ -9,6 +9,12 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import { connect } from 'react-redux';
+import { 
+  updatePostType} from './step2Actions';
+import { 
+ getPostType,
+ } from './step2Reducer';
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -26,11 +32,11 @@ class PostType extends React.PureComponent {
     value: 'normal',
   };
   componentDidMount = () => {
-    this.setState({ value: this.props.step2.postType});
+    this.setState({ value: this.props.postType});
   }
   handleChange = event => {
-    this.setState({ value: event.target.value });
-    this.props.postTypeChange(event.target.value );
+    const value=event.target.value;
+    this.props.dispatch(updatePostType(value))
   };
 
   render() {
@@ -49,7 +55,7 @@ class PostType extends React.PureComponent {
             aria-label=""
             name="gender1"
             className={classes.group}
-            value={this.state.value}
+            value={this.props.postType}
             onChange={this.handleChange}
             row
           >
@@ -65,10 +71,14 @@ class PostType extends React.PureComponent {
     );
   }
 }
+function mapStateToProps(state) {
+  return {
+    postType: getPostType(state),
+  };
+}
 PostType.propTypes = {
   classes: PropTypes.object.isRequired,
-  postTypeChange: PropTypes.func.isRequired,
-  step2:PropTypes.object.isRequired,
+  postType: PropTypes.string,
 }
 
-export default withStyles(styles)(PostType)
+export default connect(mapStateToProps)(withStyles(styles)(PostType))

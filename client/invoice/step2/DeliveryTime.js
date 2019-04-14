@@ -9,6 +9,13 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
+import { connect } from 'react-redux';
+import { 
+  updateDeliveryAmount,
+  updateDeliveryTime} from './step2Actions';
+import { 
+ getDeliveryAmount,
+ getDeliveryTime} from './step2Reducer';
 const styles = theme => ({
   root:{
     width: '60%',
@@ -19,24 +26,16 @@ const styles = theme => ({
 })
 class DeliveryTime extends PureComponent {
   state={
-    amount:'',
-    selectedTime:'',
     timeTypes:['ساعت','روز','ماه'],
-  }
-  componentDidMount = () => {
-    if (this.props.step2.deliveryDate!=='') {
-    this.setState({ amount: this.props.step2.deliveryDate.timeAmount,selectedTime: this.props.step2.deliveryDate.timeType })      
-    }
   }
   handleChange = name => event => {
     const value = event.target.value
-    this.setState({ [name]: value })
     switch (name) {
       case 'selectedTime':
-      this.props.timeTypeChange(value);            
+      this.props.dispatch(updateDeliveryTime(value))           
         break;
         case 'amount':
-        this.props.timeAmountChange(value);
+      this.props.dispatch(updateDeliveryAmount(value))
         break;
       default:
         break;
@@ -61,7 +60,7 @@ class DeliveryTime extends PureComponent {
                                 id="amount"
                                 label=""                                
                                 type="text"                                
-                                value={this.state.amount} 
+                                value={this.props.deliveryAmount} 
                                 onChange={this.handleChange('amount')}
                                 />
           </Grid>
@@ -70,7 +69,7 @@ class DeliveryTime extends PureComponent {
                               <InputLabel htmlFor="product-native-simple"></InputLabel>
                               <Select
                                 native
-                                value={this.state.selectedTime}
+                                value={this.props.deliveryTime}
                                 onChange={this.handleChange('selectedTime')}
                                 inputProps={{
                                   name: 'selectedTime',
@@ -96,12 +95,16 @@ class DeliveryTime extends PureComponent {
     )
   }
 }
-
+function mapStateToProps(state) {
+  return {
+    deliveryAmount: getDeliveryAmount(state),
+    deliveryTime: getDeliveryTime(state),
+  };
+}
 DeliveryTime.propTypes = {
   classes: PropTypes.object.isRequired,
-  timeTypeChange: PropTypes.func.isRequired,
-  timeAmountChange: PropTypes.func.isRequired,
-  step2:PropTypes.object.isRequired,
+  deliveryAmount: PropTypes.string,
+  deliveryTime: PropTypes.string,
 }
 
-export default withStyles(styles)(DeliveryTime)
+export default  connect(mapStateToProps)(withStyles(styles)(DeliveryTime))

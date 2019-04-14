@@ -11,12 +11,29 @@ import NewInvoiceStep2 from './step2/NewInvoiceStep2';
 import { Redirect } from 'react-router-dom'
 import SimpleSnackbar from '../helper/SimpleSnackbar'
 import { connect } from 'react-redux';
-import {getNextInvoiceNumber} from './api-invoice'
 import { getLoading } from '../invoice/invoiceReducer';
 import { addInvoiceRequest } from '../invoice/invoiceActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import green from '@material-ui/core/colors/green';
 import classNames from 'classnames';
+import {
+   getRows ,
+   getCustomer,
+   getCustomerId,
+   getInvoiceNumber } from './step1/step1Reducer';
+import {
+  fetchNextInvoiceNumber,
+  } from './step1/step1Actions'   
+  import {
+    fetchIranStates,
+    } from './step2/step2Actions'   
+import {
+   getDeliveryAmount 
+   ,getPostType
+   ,getSelectedState
+   ,getSelectedCity
+   ,getDeliveryTime 
+  } from './step2/step2Reducer';
 const styles = theme => ({
   root: {
     direction: 'initial',
@@ -34,9 +51,6 @@ const styles = theme => ({
   instructions: {
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit,
-  },
-  stepper:{
-    // di
   },
   button: {
     backgroundColor: '#607d8b',
@@ -72,21 +86,13 @@ class NewInvoiceStepper extends React.Component {
   state = {
     redirect:false,
     activeStep: 0,
-    step1Data:{invoiceNumber:'',invoiceCustomer:'',invoiceCustomerId:'',invoiceRows:[]},
-    step2Data:{address:{state:'',city:''},postType:'',deliveryDate:{timeAmount:0,timeType:''}},
     open:false,
     message:'',
     messageType:'',
-    input:''
   };
-  // onBackButtonEvent=(e) => {
-  //   e.preventDefault();
-  //  console.log('baaaack');
-  // }
   componentDidMount = () => {
-    // window.onpopstate  = (e) => {
-    //   e.preventDefault();
-    // }
+    this.props.dispatch(fetchIranStates());
+
     window.onpopstate = (event)=> {
       console.log('event',event);
       if (this.state.activeStep===1) {
@@ -94,110 +100,45 @@ class NewInvoiceStepper extends React.Component {
           activeStep: state.activeStep - 1,
         }));
       }
-      // history.go(0);
     };
-    getNextInvoiceNumber().then((data) => {
-      this.setState(
-        {
-         step1Data: {invoiceNumber: data.order,invoiceCustomer:'',invoiceCustomerId:'',invoiceRows:[]},
-         step2Data:{address:{state:'',city:''},postType:'',deliveryDate:{timeAmount:0,timeType:''}}
-      })
-    })
-
-
+    this.props.dispatch(fetchNextInvoiceNumber());
   }
-  handleUpdateCustomer= (value,id) => {
-    const step1={...this.state.step1Data}
-    step1.invoiceCustomer=value;
-    step1.invoiceCustomerId=id;
-    this.setState(
-      {step1Data:step1})
-   }
-   handleUpdateCustomerInput= (value) => {
-    // const step1={...this.state.step1Data}
-    // step1.invoiceCustomer=value;;
-    this.setState(
-      {input:value})
-   }
-   handleUpdateRows= (value)=> {
-    const step1={...this.state.step1Data}
-    step1.invoiceRows=value;
-    this.setState(
-      {step1Data:step1})
-   }
-   handleStateChange = value => {
-    const step2={...this.state.step2Data}
-    step2.address.state=value;
-    this.setState(
-      {step2Data:step2})
-  };
-  handleCityChange = value  => {
-    const step2={...this.state.step2Data}
-    step2.address.city=value;
-    this.setState(
-      {step2Data:step2})
-  };
-  handlePostTypeChange = value  => {
-    const step2={...this.state.step2Data}
-    step2.postType=value;
-    this.setState(
-      {step2Data:step2})
-  };
-  handleTimeTypeChange = value  => {
-    const step2={...this.state.step2Data}
-    step2.deliveryDate.timeType=value;
-    this.setState(
-      {step2Data:step2})
-  };
-  handleTimeAmountChange = value  => {
-    const step2={...this.state.step2Data}
-    step2.deliveryDate.timeAmount=value;
-    this.setState(
-      {step2Data:step2})
-  };
  getStepContent=(stepIndex) =>{
     switch (stepIndex) {
       case 0:
         return (<NewInvoiceStep1 
-          updateCustomer={this.handleUpdateCustomer}
-          updateCustomerInput={this.handleUpdateCustomerInput}
-          updateRows={this.handleUpdateRows}
-          step1Data={this.state.step1Data}/>);
+          />);
       case 1:
       return (<NewInvoiceStep2
-          updateState={this.handleStateChange}
-          updateCity={this.handleCityChange}
-          updatePostType={this.handlePostTypeChange}
-          updateTimeType={this.handleTimeTypeChange}
-          updateTimeAmount={this.handleTimeAmountChange}
-          step2Data={this.state.step2Data}/>);
+          />);
       default:
         return 'Unknown stepIndex';
     }
   }
   checkForRows=()=>{
     let total=0;
-    if (this.state.step1Data.invoiceRows.length>0) {
-      this.state.step1Data.invoiceRows=this.state.step1Data.invoiceRows.filter(row=>{
+    let checkedRows;
+    if (this.props.invoiceRows.length>0) {
+       checkedRows=this.props.invoiceRows.filter(row=>{
         if (row.price) {
           total+=row.totalPrice;
           return row;
         }
       })
     }
-    return total;
+    return {total,checkedRows};
   }
   
   handleNext = () => {
-    console.log(this.state);
-  const total= this.checkForRows();
+  const total= this.checkForRows().total;
+  const aftercheck=this.checkForRows().checkedRows;
   switch (this.state.activeStep) {
     case 0:
-     if (this.state.step1Data.invoiceRows.length===0 ||  this.state.input==='') {
+     if (aftercheck.length===0 ||  this.props.invoiceCustomer==='') {
       this.setState(
         { open: true ,
           messageType:'war',
-          message:(this.state.input==='')
+          message:(this.props.invoiceCustomer==='')
           ?'اطلاعات مربوط به نام و نام خانوادگی را تکمیل کنید'
           :'اطلاعات مربوط به فاکتور را تکمیل کنید'
         });
@@ -205,19 +146,19 @@ class NewInvoiceStepper extends React.Component {
      }
       break;
     case 1:
-    if (this.state.step2Data.address.state===''||
-    this.state.step2Data.address.city===''||
-    this.state.step2Data.postType===''||
-    this.state.step2Data.deliveryDate.timeAmount===0||
-    this.state.step2Data.deliveryDate.timeType===0 ) {
+    if (this.props.selectedState===''||
+    this.props.selectedCity===''||
+    this.props.postType===''||
+    this.props.deliveryAmount===0||
+    this.props.deliveryTime===0 ) {
       this.setState(
         { open: true ,
           messageType:'war',
-          message:(this.state.step2Data.address.state==='')
+          message:(this.props.selectedState==='')
           ?'اطلاعات مربوط به استان را تکمیل کنید'
-          :(this.state.step2Data.address.city==='')?
+          :(this.props.selectedCity==='')?
           'اطلاعات مربوط به شهر را تکمیل کنید'
-          :(this.state.step2Data.postType==='')?
+          :(this.props.postType==='')?
           'اطلاعات مربوط به روش پست را تکمیل کنید'
           :
           'اطلاعات مربوط به تاریخ تحویل را تکمیل کنید'
@@ -229,22 +170,20 @@ class NewInvoiceStepper extends React.Component {
       break;
   }
     if (this.state.activeStep === getSteps().length - 1) {
-      const invoice={
-        invoiceNumber:this.state.step1Data.invoiceNumber,
-        invoiceCustomer:this.state.input,
-        invoiceCustomerId:(this.state.input===this.state.step1Data.invoiceCustomer)
-        ?this.state.step1Data.invoiceCustomerId:'',
-        invoiceRows:this.state.step1Data.invoiceRows,
-        address:this.state.step2Data.address,
-        postType:this.state.step2Data.postType,
-        deliveryDate:this.state.step2Data.deliveryDate,
+      let invoice={
+        invoiceNumber:this.props.invoiceNumber,
+        invoiceCustomer:this.props.invoiceCustomer,
+        invoiceCustomerId:(this.props.invoiceCustomerIdInfo.lable===this.props.invoiceCustomer)?
+        this.props.invoiceCustomerIdInfo.invoiceCustomerId:''
+        ,
+        invoiceRows:this.props.invoiceRows,
+        address:{state: this.props.selectedState,city: this.props.selectedCity},
+        postType:this.props.postType,
+        deliveryDate:{timeAmount:this.props.deliveryAmount,timeType:this.props.deliveryTime},
         totalPrice:total,
       }
       this.props.dispatch(addInvoiceRequest(invoice)).then(res=>{
         this.setState({
-          // open: true ,
-          // messageType:'suc',
-          // message:'فاکتور با موفقیت اضافه شد',
           redirect:true,
         })
       });
@@ -308,14 +247,10 @@ class NewInvoiceStepper extends React.Component {
                     >
                         مرحله قبل
                     </Button>
-                    {/* <Button  color="primary" className={classes.button} onClick={this.handleNext}>
-                        {activeStep === steps.length - 1 ? 'ذخیره' : 'مرحله بعد'}
-                    </Button> */}
 
                              <div className={classes.wrapper}>
                               <Button
                                 variant="contained"
-                                // color="primary"
                                 className={buttonClassname}
                                 disabled={this.props.isLoading}
                                 onClick={this.handleNext}
@@ -339,11 +274,29 @@ class NewInvoiceStepper extends React.Component {
 function mapStateToProps(state) {
   return {
     isLoading: getLoading(state),
-  };
+    invoiceRows: getRows(state),
+    postType: getPostType(state),
+    deliveryAmount: getDeliveryAmount(state),
+    deliveryTime: getDeliveryTime(state),
+    selectedCity: getSelectedCity(state),
+    selectedState: getSelectedState(state),
+    invoiceCustomer: getCustomer(state),
+    invoiceCustomerIdInfo: getCustomerId(state),
+    invoiceNumber:getInvoiceNumber(state)
+};
 }
 NewInvoiceStepper.propTypes = {
   classes: PropTypes.object,
   isLoading:PropTypes.bool,
+  invoiceRows: PropTypes.array,
+  invoiceNumber:PropTypes.string,
+  invoiceCustomer: PropTypes.string,
+  invoiceCustomerIdInfo: PropTypes.object,
+  deliveryAmount: PropTypes.string,
+  deliveryTime: PropTypes.string,
+  postType: PropTypes.string,
+  selectedCity: PropTypes.string,
+  selectedState: PropTypes.string,
 };
 
 export default connect(mapStateToProps)(withStyles(styles)(NewInvoiceStepper));

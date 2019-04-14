@@ -7,8 +7,17 @@ import Grid from '@material-ui/core/Grid'
 import CardHeader from '@material-ui/core/CardHeader';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import {iranStates} from '../api-invoice';
 import Select from '@material-ui/core/Select';
+import { connect } from 'react-redux';
+import { 
+   
+   updateSelectedState,
+   updateSelectedCity} from './step2Actions';
+import { 
+  getStates,
+  getCities,
+  getSelectedCity,
+  getSelectedState } from './step2Reducer';
 const styles = theme => ({
   root:{
     width: '60%',
@@ -19,33 +28,14 @@ const styles = theme => ({
 
 })
 class StateAndCity extends PureComponent {
-  state={
-    iranStates:[],
-    states:[],
-    selectedState:'',
-    selectedCity:'',
-    cities:[],
-  }
-  componentDidMount = () => {
-    iranStates().then((data) => {
-      this.setState({iranStates:data.iranStates,states:Object.keys(data.iranStates)})
-        if (this.props.step2.address.state!=='' && this.props.step2.address.city!=='') {
-          this.setState({ selectedState: this.props.step2.address.state });
-          this.setState({cities: Object.values(this.state.iranStates[this.props.step2.address.state])});
-          this.setState({ selectedCity: this.props.step2.address.city });
-        }
-  })
-  }
+
   handleStateChange = name => event => {
     const value=event.target.value;
-    this.setState({ [name]: value });
-    this.setState({cities: Object.values(this.state.iranStates[value])});
-    this.props.stateChange(value);
+    this.props.dispatch(updateSelectedState(value))
   };
   handleCityChange = name => event => {
     const value=event.target.value;
-    this.setState({ [name]: value });
-    this.props.cityChange(value);
+    this.props.dispatch(updateSelectedCity(value))
   };
   render() {
     const {classes} = this.props
@@ -63,7 +53,7 @@ class StateAndCity extends PureComponent {
                               <InputLabel htmlFor="product-native-simple"></InputLabel>
                               <Select
                                 native
-                                value={this.state.selectedState}
+                                value={this.props.selectedState}
                                 onChange={this.handleStateChange('selectedState')}
                                 inputProps={{
                                   name: 'selectedState',
@@ -71,7 +61,7 @@ class StateAndCity extends PureComponent {
                                 }}
                               >
                                 <option value="" />
-                                {this.state.states.map(state => (
+                                {this.props.states.map(state => (
                                       <option key={state} value={state} >
                                         {state}
                                       </option>
@@ -85,7 +75,7 @@ class StateAndCity extends PureComponent {
                               <InputLabel htmlFor="product-native-simple"></InputLabel>
                               <Select
                                 native
-                                value={this.state.selectedCity}
+                                value={this.props.selectedCity}
                                 onChange={this.handleCityChange('selectedCity')}
                                 inputProps={{
                                   name: 'selectedCity',
@@ -93,7 +83,7 @@ class StateAndCity extends PureComponent {
                                 }}
                               >
                                 <option value="" />
-                                {this.state.cities.map(city => (
+                                {this.props.cities.map(city => (
                                       <option key={city} value={city} >
                                         {city}
                                       </option>
@@ -110,13 +100,20 @@ class StateAndCity extends PureComponent {
     )
   }
 }
-
+function mapStateToProps(state) {
+  return {
+    states: getStates(state),
+    cities: getCities(state),
+    selectedCity: getSelectedCity(state),
+    selectedState: getSelectedState(state),
+  };
+}
 StateAndCity.propTypes = {
   classes: PropTypes.object.isRequired,
-  iranStates:PropTypes.array,
-  stateChange: PropTypes.func.isRequired,
-  cityChange: PropTypes.func.isRequired,
-  step2:PropTypes.object.isRequired,
+  states:PropTypes.array,
+  cities:PropTypes.array,
+  selectedCity: PropTypes.string,
+  selectedState: PropTypes.string,
 }
 
-export default withStyles(styles)(StateAndCity)
+export default connect(mapStateToProps)(withStyles(styles)(StateAndCity))

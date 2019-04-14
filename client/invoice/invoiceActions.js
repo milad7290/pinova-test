@@ -1,5 +1,6 @@
 import {invoiceListWithFilter,create} from './api-invoice'
-
+import {resetStep1} from './step1/step1Actions'
+import {resetStep2} from './step2/step2Actions'
 export const ADD_INVOICE = 'ADD_INVOICE';
 export const ADD_INVOICES = 'ADD_INVOICES';
 export const SET_LOADING = 'SET_LOADING';
@@ -32,6 +33,8 @@ export function addInvoiceRequest(invoice) {
       {
         dispatch(setLoading(false))
         dispatch(setSaved(true))
+        dispatch(resetStep1())
+        dispatch(resetStep2())
        return( dispatch(addInvoice(res.addedInvoice))
        )});
   };

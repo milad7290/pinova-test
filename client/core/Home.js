@@ -75,10 +75,6 @@ class Home extends Component {
             </Grid>
             </Card>
           </div>
-          <div >
-          <Button onClick={this.clickBtn} >click me</Button>
-          </div>
-          {/* <Footer show={true}/> */}
         </div>
     )
   }

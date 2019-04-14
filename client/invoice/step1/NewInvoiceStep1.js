@@ -5,8 +5,11 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid'
 import IntegrationAutosuggest from '../../customer/IntegrationAutosuggest'
-import InvoiceItems from './InvoiceItems'
+import InvoiceItems from '../invoiceItems/InvoiceItems'
 import  moment from 'moment-jalaali';
+import { connect } from 'react-redux';
+import {
+  getInvoiceNumber } from './step1Reducer';
 const styles = theme => ({
 
 })
@@ -22,7 +25,7 @@ class NewInvoiceStep1 extends Component {
         <div className={classes.root}>
         <Grid container spacing={24}>
           <Grid item xs={6} sm={6}>
-        <span>شماره فاکتور: </span> { this.props.step1Data.invoiceNumber} 
+        <span>شماره فاکتور: </span> { this.props.order} 
           </Grid>
           <Grid item xs={6} sm={6}>
           <span>تاریخ امروز: </span>  { moment(this.state.now).format('jYYYY/jM/jD')}
@@ -31,10 +34,10 @@ class NewInvoiceStep1 extends Component {
       </div>
       <br/>
       <div >
-      <IntegrationAutosuggest getInput={this.props.updateCustomerInput}  getInputData={this.props.updateCustomer} customer={this.props.step1Data.invoiceCustomer}/>
+      <IntegrationAutosuggest />
       </div>
           <div>
-          <InvoiceItems   updateTableDate={this.props.updateRows} rows={this.props.step1Data.invoiceRows}/>
+          <InvoiceItems  />
           </div>
        
         </CardContent>
@@ -42,12 +45,14 @@ class NewInvoiceStep1 extends Component {
     )
   }
 }
+function mapStateToProps(state) {
+  return {
+    order:getInvoiceNumber(state)
+};
+}
 NewInvoiceStep1.propTypes = {
   classes: PropTypes.object.isRequired,
-  step1Data:PropTypes.object.isRequired,
-  updateCustomer:PropTypes.func.isRequired,
-  updateCustomerInput:PropTypes.func.isRequired,
-  updateRows:PropTypes.func.isRequired,
+  order:PropTypes.string,
 }
 
-export default withStyles(styles)(NewInvoiceStep1)
+export default connect(mapStateToProps) (withStyles(styles)(NewInvoiceStep1))

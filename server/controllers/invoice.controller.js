@@ -48,12 +48,11 @@ const create = (req, res) => {
     default:
       break;
   }
-  console.log('invoiceCustomerId', invoiceCustomerId)
   if (invoiceCustomerId && invoiceCustomerId !== '') {
     mdb.collection('invoices').insertOne({
       customerId: new ObjectID(invoiceCustomerId),
       invoiceNumber: invoiceNumber,
-      invoiceCustomer: invoiceCustomer,
+      invoiceCustomer: invoiceCustomer, 
       invoiceRows: invoiceRows,
       totalPrice: totalPrice,
       address: address,
@@ -172,7 +171,7 @@ const getNextInvoiceNumber = (req, res) => {
     .each((err, invoice) => {
 
       order = (invoice) ?
-        invoice.invoiceNumber + 1 :
+       parseInt(invoice.invoiceNumber,10) + 1 :
         res.send({
           order
         });

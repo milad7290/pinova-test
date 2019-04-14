@@ -14,8 +14,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import green from '@material-ui/core/colors/green';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-// import { fetchProducts,addProductRequest } from '../../product/productActions';
-import { getLoading } from '../product/productReducer';
+import { setName,setPrice,setQuantity } from './productActions';
+import { getLoading ,getName,getPrice,getQuantity} from './productReducer';
 function getModalStyle() {
   const top = 50 ;
   const left = 50 ;
@@ -65,7 +65,6 @@ class NewProduct extends React.PureComponent {
     this.nameInput = React.createRef();
     this.quantityInput = React.createRef();
     this.priceInput = React.createRef();
-    // this.handleClickEnter = this.handleClickEnter.bind(this);
   }
   state = {
     pristan:{
@@ -74,9 +73,6 @@ class NewProduct extends React.PureComponent {
       priceStatus:true,
     },
     open: false,
-    name: '',
-    quantity: '',
-    price: '',
     errorMessage:'',
     loading: false,
     success: false,
@@ -94,9 +90,10 @@ class NewProduct extends React.PureComponent {
         if (!persian.test(value)&& value!=='') {
           return
          }
-        // this.setState({  })
+        this.props.dispatch(setName(value))
         this.setState(
-          {[name]: value,
+          {
+            // [name]: value,
             pristan:
             {
               nameStatus:false,
@@ -106,8 +103,9 @@ class NewProduct extends React.PureComponent {
           })
         break;
         case 'quantity':
+        this.props.dispatch(setQuantity(value))
         this.setState(
-          {[name]: value,
+          {
             pristan:
             {quantityStatus:false,
               nameStatus:true,
@@ -119,8 +117,9 @@ class NewProduct extends React.PureComponent {
         if (!number.test(value)&& value!=='') {
           return
          }
+         this.props.dispatch(setPrice(value))
         this.setState(
-          {[name]: value,
+          {
             pristan:
             {priceStatus:false,
               nameStatus:true,
@@ -136,7 +135,7 @@ class NewProduct extends React.PureComponent {
 
    clickSubmit = () => {
 
-    if (this.state.name===''||this.state.quantity===''||this.state.price==='') {
+    if (this.props.name===''||this.props.quantity===''||this.props.price==='') {
       this.setState(
         {pristan:
           {nameStatus:false,
@@ -146,9 +145,9 @@ class NewProduct extends React.PureComponent {
       return;
     }
     const product={
-      name:this.state.name,
-      quantity:this.state.quantity,
-      price:this.state.price
+      name:this.props.name,
+      quantity:this.props.quantity,
+      price:this.props.price
     }
 
     this.props.selectedRowChange(product);
@@ -213,13 +212,13 @@ class NewProduct extends React.PureComponent {
                                 inputRef={this.nameInput} 
                                 autoFocus
                                 required
-                                error={this.state.name==='' && !this.state.pristan.nameStatus}
+                                error={this.props.name==='' && !this.state.pristan.nameStatus}
                                 margin="dense"
                                 id="name"
                                 label="نام"                                
                                 type="text"
                                 fullWidth
-                                value={this.state.name} 
+                                value={this.props.name} 
                                 onChange={this.handleChange('name')}
                                 />
                                 <TextField                          
@@ -231,13 +230,13 @@ class NewProduct extends React.PureComponent {
                                 }}
                                 onKeyPress={this.handleClickEnter('price')}
                                 inputRef={this.quantityInput} 
-                                error={this.state.quantity==='' && !this.state.pristan.quantityStatus} 
+                                error={this.props.quantity==='' && !this.state.pristan.quantityStatus} 
                                 margin="dense"
                                 id="quantity"
                                 label="تعداد"
                                 type="number"
                                 fullWidth
-                                value={this.state.quantity} 
+                                value={this.props.quantity} 
                                 onChange={this.handleChange('quantity')} 
                                 />
                                 <TextField   
@@ -249,13 +248,13 @@ class NewProduct extends React.PureComponent {
                                 onKeyPress={this.handleClickEnter('save')}
                                 inputRef={this.priceInput} 
                                 required
-                                error={this.state.price==='' && !this.state.pristan.priceStatus}
+                                error={this.props.price==='' && !this.state.pristan.priceStatus}
                                 margin="dense"
                                 id="price"
                                 label="قیمت"
                                 type="tel"
                                 fullWidth
-                                value={this.state.price}
+                                value={this.props.price}
                                onChange={this.handleChange('price')}
                                 />
                             </DialogContent>
@@ -266,7 +265,6 @@ class NewProduct extends React.PureComponent {
                              <div className={classes.wrapper}>
                               <Button
                                 variant="contained"
-                                // color="primary"
                                 className={buttonClassname}
                                 disabled={this.props.isLoading}
                                 onClick={this.clickSubmit}
@@ -284,12 +282,18 @@ class NewProduct extends React.PureComponent {
 function mapStateToProps(state) {
   return {
     isLoading: getLoading(state),
+    name: getName(state),
+    quantity: getQuantity(state),
+    price: getPrice(state),
   };
 }
 NewProduct.propTypes = {
   classes: PropTypes.object.isRequired,
   selectedRowChange: PropTypes.func.isRequired,
   isLoading:PropTypes.bool,
+  name:PropTypes.string,
+  quantity:PropTypes.string,
+  price:PropTypes.string,
 };
 
 export default connect(mapStateToProps)(withStyles(styles)(NewProduct))

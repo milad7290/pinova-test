@@ -14,35 +14,16 @@ const initialState = {
 const InvoiceReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_INVOICE:
-      return Object.assign({}, {
-        data: [action.invoice, ...state.data],
-        isLoading:false,
-        isSaved:false
-      });
+      return {...state,data:[...state.data,action.invoice]};
     case ADD_INVOICES:
-      return {
-        data: action.invoices,
-        isLoading:false,
-        isSaved:false
-
-      };
+      return {...state,data:action.invoices};
     case ADD_INVOICES_CONCAT:
-      return Object.assign({}, {
-        data: state.data.concat(action.invoices),
-        isLoading:false,
-        isSaved:false
-      });
+      return {...state,data:[...state.data,action.invoices]};
       case SET_LOADING :
-      return {
-          data: state.data,
-          isLoading: action.isLoading,
-      }; 
+      return {...state,isLoading:action.isLoading};
       case SET_SAVING :
-      return {
-          data: state.data,
-          isSaved: action.isSaved,
-      }; 
-    default:
+      return {...state,isSaved:action.isSaved};
+      default:
       return state;
   }
 };

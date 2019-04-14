@@ -3,6 +3,7 @@ import {
 } from './api-customer';
 
 export const ADD_CUSTOMERS = 'ADD_CUSTOMERS';
+export const UPDSTE_AUTO = 'UPDSTE_AUTO';
 
 
 export function addCustomers(customers) {
@@ -15,9 +16,6 @@ export function addCustomers(customers) {
 export function fetchCustomers(value) {
   return (dispatch) => {
     return customerList(value).then(res => {
-      // if (res.err) {
-      //   dispatch( setError(true))
-      // }
       dispatch(addCustomers(res.customers));
     });
   };

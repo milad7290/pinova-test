@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {Route, Switch} from 'react-router-dom'
 import Home from './core/Home'
+import Test from './core/Test'
 import Menu from './core/Menu'
 import InvoiceReport from './invoice/report/InvoiceReport'
 import NewInvoiceStepper from './invoice/NewInvoiceStepper'
@@ -21,7 +22,6 @@ class MainRouter extends Component {
         <Route path="/invoice/addInvoice" component={NewInvoiceStepper}/>
         <Route path="/invoice/report" component={InvoiceReport}/>
       </Switch>
-      {/* <Footer show={true}/> */}
     </div>)
   }
 }

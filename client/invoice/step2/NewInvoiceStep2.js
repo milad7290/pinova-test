@@ -16,15 +16,15 @@ class NewInvoiceStep2 extends Component {
     return (
 <div>
           <div>
-          <StateAndCity stateChange={this.props.updateState} cityChange={this.props.updateCity} step2={this.props.step2Data}/>    
+          <StateAndCity />    
           </div>
      
           <div>
-          <PostType postTypeChange={this.props.updatePostType} step2={this.props.step2Data}/>    
+          <PostType />    
           </div>
 
           <div>
-          <DeliveryTime  timeTypeChange={this.props.updateTimeType} timeAmountChange={this.props.updateTimeAmount} step2={this.props.step2Data}/>
+          <DeliveryTime  />
           </div>
 </div>
     )
@@ -33,12 +33,6 @@ class NewInvoiceStep2 extends Component {
 
 NewInvoiceStep2.propTypes = {
   classes: PropTypes.object.isRequired,
-  step2Data:PropTypes.object.isRequired,
-  updateState:PropTypes.func.isRequired,
-  updateCity:PropTypes.func.isRequired,
-  updatePostType:PropTypes.func.isRequired,
-  updateTimeType:PropTypes.func.isRequired,
-  updateTimeAmount:PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(NewInvoiceStep2)

@@ -8,8 +8,10 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core/styles';
-import { fetchCustomers } from '../customer/customerActions';
+import { fetchCustomers} from '../customer/customerActions';
+import { updateCustomer, updateCustomerId} from '../invoice/step1/step1Actions';
 import { getCustomers } from '../customer/customerReducer';
+import { getCustomer  } from '../invoice/step1/step1Reducer';
 import { connect } from 'react-redux';
 
 function renderInputComponent(inputProps) {
@@ -54,26 +56,6 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
     </MenuItem>
   );
 }
-
-function getSuggestions(value,suggestions) {
-  const inputValue = deburr(value.trim()).toLowerCase();
-  const inputLength = inputValue.length;
-  let count = 0;
-
-  return inputLength === 0
-    ? []
-    : suggestions.filter(suggestion => {
-        const keep =
-          count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
-
-        if (keep) {
-          count += 1;
-        }
-
-        return keep;
-      });
-}
-
 const styles = theme => ({
   root: {
     height: 50,
@@ -103,38 +85,16 @@ const styles = theme => ({
 });
 
 class IntegrationAutosuggest extends React.PureComponent {
-  state = {
-    single: '',
-    singleid: '',
-    popper: '',
-    suggestions: [],
-  };
+
    getSuggestionValue=(suggestion)=> {
-    this.props.getInputData(suggestion.label,suggestion.value);
-    // this.setState({      
-    //   singleid:suggestion.value ,
-    // });
+    this.props.dispatch(updateCustomerId(suggestion.value,suggestion.label))
     return suggestion.label;
   }
   componentDidMount = () => {
-    this.props.dispatch(fetchCustomers('A'));
-    this.setState({      
-      single: this.props.customer,
-    });
+    this.props.dispatch(updateCustomer(this.props.customer))
   }
   handleSuggestionsFetchRequested = ({ value }) => {
-    this.props.dispatch(fetchCustomers(value)).then(res=>{
-       this.setState({      
-          suggestions: this.props.customers,
-      });
-    })
-   
-  };
-
-  handleSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: [],
-    });
+    this.props.dispatch(fetchCustomers(value))
   };
 
   handleChange = name => (event, { newValue }) => {
@@ -142,10 +102,7 @@ class IntegrationAutosuggest extends React.PureComponent {
     if (!persian.test(newValue)&& newValue!=='') {
       return
      }
-    this.setState({
-      [name]: newValue,
-    });
-    this.props.getInput(newValue);
+     this.props.dispatch(updateCustomer(newValue))
   };
 
   render() {
@@ -153,7 +110,7 @@ class IntegrationAutosuggest extends React.PureComponent {
 
     const autosuggestProps = {
       renderInputComponent,
-      suggestions: this.state.suggestions,
+      suggestions: this.props.customers,
       onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
       onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
       getSuggestionValue:this.getSuggestionValue,
@@ -167,7 +124,7 @@ class IntegrationAutosuggest extends React.PureComponent {
           inputProps={{
             classes,
             placeholder: 'نام و نام خانوادگی',
-            value: this.state.single,
+            value: this.props.customer,
             onChange: this.handleChange('single'),
           }}
           theme={{
@@ -189,16 +146,14 @@ class IntegrationAutosuggest extends React.PureComponent {
 IntegrationAutosuggest.need = [() => { return fetchCustomers(); }];
 function mapStateToProps(state) {
   return {
-    // showAddPost: getShowAddPost(state),
     customers: getCustomers(state),
+    customer: getCustomer(state),
   };
 }
 IntegrationAutosuggest.propTypes = {
   classes: PropTypes.object.isRequired,
   customers: PropTypes.array,
-  customer: PropTypes.string.isRequired,
-  getInputData: PropTypes.func.isRequired,
-  getInput: PropTypes.func.isRequired,
+  customer: PropTypes.string,
 };
 
 export default connect(mapStateToProps)( withStyles(styles)(IntegrationAutosuggest));
