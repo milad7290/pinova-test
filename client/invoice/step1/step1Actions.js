@@ -7,6 +7,8 @@ export const UPDATE_STEP1_ROWS_ADD = 'UPDATE_STEP1_ROWS_ADD';
 export const UPDATE_STEP1_ROWS_REMOVE = 'UPDATE_STEP1_ROWS_REMOVE';
 export const UPDATE_STEP1_ROWS_UPDATE = 'UPDATE_STEP1_ROWS_UPDATE';
 export const RESET_STEP1 = 'RESET_STEP1';
+export const SET_STEPPER_STEP = 'SET_STEPPER_STEP';
+export const SET_REDIRECT = 'SET_REDIRECT'
 
 export function updateCustomer(invoiceCustomer) {
   return {
@@ -43,5 +45,16 @@ export function fetchNextInvoiceNumber() {
     return getNextInvoiceNumber().then(res => {
       dispatch(setNextInvoiceNumber(res.order.toString()));
     });
+  };
+}
+export function setStepperStep(activeStep) {
+  return {
+    type: SET_STEPPER_STEP,
+    activeStep,
+  };
+}
+export function setRedirect() {
+  return {
+    type: SET_REDIRECT,
   };
 }

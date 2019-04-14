@@ -117,7 +117,6 @@ const ListWithFilter = (req, res) => {
 
 
         if (!invoice) {
-          console.log('page', page, 'offset', offset)
           res.send({
             invoices
           });

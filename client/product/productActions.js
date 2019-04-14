@@ -6,6 +6,9 @@ export const ADD_PRODUCTS = 'ADD_PRODUCTS';
 export const SET_NAME = 'SET_NAME';
 export const SET_QUANTITY = 'SET_QUANTITY';
 export const SET_PRICE = 'SET_PRICE';
+export const SET_PRISTAN_FALSE = 'SET_PRISTAN_FALSE';
+export const ADD_PRODUCT_OPEN = 'ADD_PRODUCT_OPEN';
+export const ADD_PRODUCT_CLOSE = 'ADD_PRODUCT_CLOSE';
 export function addProduct(product) {
   return {
     type: ADD_PRODUCT,
@@ -60,6 +63,21 @@ export function fetchProducts() {
     return productList().then(res => {
       dispatch(addProducts(res.products));
     });
+  };
+}
+export function setPristanFalse() {
+  return {
+    type: SET_PRISTAN_FALSE,
+  };
+}
+export function addOpen() {
+  return {
+    type: ADD_PRODUCT_OPEN,
+  };
+}
+export function addClose() {
+  return {
+    type: ADD_PRODUCT_CLOSE,
   };
 }
 

@@ -3,14 +3,18 @@ import {
   UPDATE_STEP1_CUSTOMER_ID,
   UPDATE_STEP1_ROWS_UPDATE,
   UPDATE_STEP1_ORDER,
-  RESET_STEP1
+  RESET_STEP1,
+  SET_REDIRECT,
+  SET_STEPPER_STEP
 } from './step1Actions';
 const initialState = {
   invoiceRows: [],
   invoiceCustomer:'',
   invoiceCustomerId:'',
   invoiceNumber:'',
-  lable:''
+  lable:'',
+  activeStep:0,
+  redirect:false
 };
 const Step1Reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -24,6 +28,10 @@ const Step1Reducer = (state = initialState, action) => {
       return {...state,invoiceNumber:action.invoiceNumber};
      case RESET_STEP1:
       return initialState;
+    case SET_REDIRECT :
+      return {...state,redirect:true};
+    case SET_STEPPER_STEP :
+      return {...state,activeStep:action.activeStep};
       default:
       return state;
   }
@@ -41,4 +49,10 @@ export const getCustomerId = state => {
 export const getInvoiceNumber = state => {
   return state.step1.invoiceNumber
 }
+export const getRedirectStatus = (state) => {
+  return state.step1.redirect
+};
+export const getStepperStep = (state) => {
+  return state.step1.activeStep
+};
 export default Step1Reducer;

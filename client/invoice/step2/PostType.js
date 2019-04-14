@@ -32,7 +32,6 @@ class PostType extends React.PureComponent {
     value: 'normal',
   };
   componentDidMount = () => {
-    this.setState({ value: this.props.postType});
   }
   handleChange = event => {
     const value=event.target.value;

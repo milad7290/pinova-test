@@ -12,6 +12,7 @@ import TextField from '@material-ui/core/TextField';
 import NewProduct from '../../product/NewProduct'
 import { connect } from 'react-redux';
 import { fetchProducts,addProductRequest } from '../../product/productActions';
+import { showSnack,hideSnack } from '../../helper/helperActions';
 import { updateRow } from '../step1/step1Actions';
 import { getProducts } from '../../product/productReducer';
 import { getRows } from '../step1/step1Reducer';
@@ -96,7 +97,6 @@ class InvoiceItems extends PureComponent {
   }
   componentDidMount = () => {
     this.props.dispatch(fetchProducts());
-    console.log('this.props.rows',this.props.rows)
     const firstRow={
       productId:'0',
       productName:'',
@@ -114,11 +114,6 @@ class InvoiceItems extends PureComponent {
   handlepProductIdChange = productId => {
     this.state.selectedProduct=productId.toString();
   };
-  handleClose = () => {
-    this.setState({
-      open:false,
-    });
-  };
   getIndex = productId => {
     const index= this.props.rows.findIndex(x=>x.productId=== productId);
     return index;
@@ -128,12 +123,7 @@ class InvoiceItems extends PureComponent {
     const index= this.props.rows.findIndex(x=>x.productId=== name);
     const ifExist= this.props.rows.findIndex(x=>x.productId=== value);
     if (ifExist!==-1) {
-      this.setState(
-        {
-          open:true,
-          message:'این کالا قبلا انتخاب شده است!',
-          messageType:'war',
-        });
+      this.props.dispatch(showSnack('این کالا قبلا انتخاب شده است!','war'))
       return;
     }
     this.setState({ [name]: value });
@@ -143,7 +133,6 @@ class InvoiceItems extends PureComponent {
     rows[index].price=this.props.products.find(x=>x._id===value).price;
     rows[index].totalPrice=rows[index].price * rows[index].count;
     this.props.dispatch(updateRow(rows));
-    console.log(this.props.rows,this.props.rows[index].countRef.current);
     this.props.rows[index].countRef.current.focus();
     if (index===this.props.rows.length-1) {  
     this.handleClickNewRow();
@@ -152,11 +141,7 @@ class InvoiceItems extends PureComponent {
   selectedRowProductChange = (product) => {
     let addedProduct;
    this.props.dispatch(addProductRequest(product)).then(res=>{
-    this.setState(
-      { open:true,
-        message:'محصول با موفقیت اضافه شد',
-        messageType:'suc',
-      });
+    this.props.dispatch(showSnack('محصول با موفقیت اضافه شد','suc'))
     addedProduct=res.product;
     const index= this.props.rows.findIndex(x=>x.productId=== this.state.selectedProduct); 
     this.setState({ [index]: addedProduct._id });
@@ -186,12 +171,7 @@ class InvoiceItems extends PureComponent {
    handleClickNewRow = () => {
     const productId=this.props.rows[this.props.rows.length-1].productId;
     if (!this.props.rows[this.props.rows.length-1].price) {
-      this.setState(
-        {
-          open:true,
-          message:'برای اضافه کردن سطر جدید، اطلاعات ردیف را کامل کنید',
-          messageType:'war',
-        });
+      this.props.dispatch(showSnack('برای اضافه کردن سطر جدید، اطلاعات ردیف را کامل کنید','war'))
       return;
     }
     const newRow={
@@ -211,8 +191,11 @@ class InvoiceItems extends PureComponent {
     const index= rows.findIndex(x=>x.productId=== productId); 
     rows.splice(index,1);
     this.props.dispatch(updateRow(rows));
-    console.log(rows);
    }
+   handleClose = () => {
+    this.props.dispatch(hideSnack());
+  };
+
   render() {
     const {classes} = this.props
     return (
@@ -307,10 +290,6 @@ class InvoiceItems extends PureComponent {
                                   (<div >  
                                     </div> )
                                 }                         
-                                     <div>
-                                            <SimpleSnackbar open={this.state.open} close={this.handleClose}
-                                            message={this.state.message} messageType={this.state.messageType}/>
-                                     </div>               
                               </div>
                       
                               </div>

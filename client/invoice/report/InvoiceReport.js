@@ -20,8 +20,8 @@ import InvoiceTable from './InvoiceTable'
 import HomeIcon from '@material-ui/icons/Home'
 import {Link} from 'react-router-dom'
 import { connect } from 'react-redux';
-import { fetchInvoices } from '../../invoice/invoiceActions';
-import { getInvoices } from '../../invoice/invoiceReducer';
+import { fetchInvoices ,setReportDrwer,setReportPage } from '../../invoice/invoiceActions';
+import { getInvoices ,getFilterType,getFilterTypeSearch,getFromDate,getToDate,getDrwerStatus,getReportPage } from '../../invoice/invoiceReducer';
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -93,15 +93,11 @@ class InvoiceReport extends React.Component {
   now=new Date();
   state = {
     open: false,
-    filterType:'factorItems',
-    filterTypeToSearch:'factorItems',
-    fromDate:this.now.setFullYear(2017,1),
-    toDate:new Date(),
     pageNumber:0
   };
   componentDidMount = () => {
     window.addEventListener('scroll', this.handleOnScroll);
-    const params={from:'notSet',to:'notSet',page:0,offset:(this.state.filterType==='factorItems'?20:25)}
+    const params={from:'notSet',to:'notSet',page:0,offset:(this.props.filterType==='factorItems'?20:25)}
     this.props.dispatch(fetchInvoices(params));     
   }
   
@@ -116,26 +112,21 @@ class InvoiceReport extends React.Component {
 
     if (scrolledToBottom) {
 
-      let state={...this.state};
-      const page=state.pageNumber+1;
-      this.setState({pageNumber:page});
+      const page=this.props.pageNumber;
+      this.props.dispatch(setReportPage(page+1))
       this.loadMore();
     }
   }
   handleDrawerOpen = () => {
-    this.setState({ open: true });
+    this.props.dispatch(setReportDrwer())
   };
 
   handleDrawerClose = () => {
-    this.setState({ open: false });
-  };
-  handleChange = (value,name)  => {
-    this.setState({ [name]: value });
+    this.props.dispatch(setReportDrwer())
   };
   handleSearch=()=>{
-    this.setState({ filterTypeToSearch: this.state.filterType ,
-      pageNumber:0 });
-    const params={from:this.state.fromDate,to:this.state.toDate,page:0,offset:(this.state.filterType==='factorItems'?20:25)}
+    this.props.dispatch(setReportPage(0))
+    const params={from:this.props.fromDate,to:this.props.toDate,page:0,offset:(this.props.filterType==='factorItems'?20:25)}
     this.props.dispatch(fetchInvoices(params));
   }
   invoiceItems=()=>{
@@ -156,13 +147,11 @@ class InvoiceReport extends React.Component {
     return items;
   }
   loadMore=()=>{
-    const params={from:'notSet',to:'notSet',page:this.state.pageNumber,offset:(this.state.filterType==='factorItems'?20:25)}
+    const params={from:'notSet',to:'notSet',page:this.props.pageNumber,offset:(this.props.filterType==='factorItems'?20:25)}
     this.props.dispatch(fetchInvoices(params));
    }
   render() {
-    const { classes, theme } = this.props;
-    const { open } = this.state;
-
+    const { classes, theme,open } = this.props;
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -206,10 +195,9 @@ class InvoiceReport extends React.Component {
             </IconButton>
           </div>
           <Divider />
-              <TimeFilter filterTimeChange={this.handleChange}/>
-              {/* <TimeFilterV2 filterTimeChange={this.handleChange}/> */}
+              <TimeFilter/>
           <Divider />
-              <FilterType filterTypeChange={this.handleChange}/>
+              <FilterType />
           <Divider />
           <Button onClick={this.handleSearch}   className={classes.button}>
             <SearchIcon  className={classNames(classes.leftIcon, classes.iconSmall)} />
@@ -223,8 +211,8 @@ class InvoiceReport extends React.Component {
         >
           
           <InvoiceTable
-             filterType={this.state.filterTypeToSearch} 
-             invoices={(this.state.filterTypeToSearch==='factorItems')?
+             filterType={this.props.filterTypeSearch} 
+             invoices={(this.props.filterTypeSearch==='factorItems')?
              this.invoiceItems():this.props.invoices} 
              />
         
@@ -233,16 +221,25 @@ class InvoiceReport extends React.Component {
     );
   }
 }
-InvoiceReport.need = [() => {
-  const params={from:this.state.fromDate,to:this.state.toDate}
-   return fetchInvoices(params); }];
 function mapStateToProps(state) {
   return {
     invoices: getInvoices(state),
+    filterType: getFilterType(state),
+    filterTypeSearch: getFilterTypeSearch(state),
+    fromDate: getFromDate(state),
+    toDate: getToDate(state),
+    pageNumber: getReportPage(state),
+    open: getDrwerStatus(state),
   };
 }
 InvoiceReport.propTypes = {
   invoices: PropTypes.array,
+  filterType: PropTypes.string,
+  filterTypeSearch: PropTypes.string,
+  fromDate: PropTypes.instanceOf(Date),
+  toDate: PropTypes.instanceOf(Date),
+  pageNumber: PropTypes.number,
+  open: PropTypes.bool,
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };

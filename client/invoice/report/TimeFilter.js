@@ -1,15 +1,16 @@
-import React , { useState } from 'react';
+import React  from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import  jmoment from 'moment-jalaali';
-import moment from "moment";
 import JalaliUtils from "@date-io/jalaali";
 import {
   DatePicker,
   MuiPickersUtilsProvider,
 } from "material-ui-pickers";
-// const [selectedDate, handleDateChange] = useState(moment());
+import { connect } from 'react-redux';
+import { setDate } from '../../invoice/invoiceActions';
+import { getFromDate,getToDate } from '../../invoice/invoiceReducer';
 
 const styles = theme => ({
     box:{
@@ -28,19 +29,13 @@ const styles = theme => ({
 });
 
 class TimeFilter extends React.Component{
-  state = {
-    fromDate:moment(),
-    toDate:moment()
-  };
   componentDidMount = () => {
     jmoment.loadPersian({ dialect: 'persian-modern', usePersianDigits: true });
   }
     handleChange = name => event => {
       if (event) {
-              console.log('event.target.value',event._d,name);
         const value = event._d
-        this.setState({ [name]: value })
-        this.props.filterTimeChange(new Date(event._d) ,name);
+        this.props.dispatch(setDate(new Date(event._d) ,name));
       }
       }
    render() {
@@ -60,7 +55,7 @@ class TimeFilter extends React.Component{
                             cancelLabel="لغو"
                             clearLabel="پاک کردن"
                             labelFunc={date => (date ? date.format("jYYYY/jMM/jDD") : "")}
-                            value={this.state.fromDate}
+                            value={this.props.fromDate}
                             onChange={this.handleChange('fromDate')}
                             animateYearScrolling={false}
                           />
@@ -76,44 +71,30 @@ class TimeFilter extends React.Component{
                             cancelLabel="لغو"
                             clearLabel="پاک کردن"
                             labelFunc={date => (date ? date.format("jYYYY/jMM/jDD") : "")}
-                            value={this.state.toDate}
+                            value={this.props.toDate}
                             onChange={this.handleChange('toDate')}
                             animateYearScrolling={false}
                           />
                         </div>
 
                       </MuiPickersUtilsProvider>
-
-                     {/* <TextField
-                      id="date"
-                      label="از تاریخ"
-                      type="date"
-                      defaultValue="2017-05-24"
-                      className={classes.textField}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      onChange={this.handleChange('fromDate')}
-                    />
-                       <TextField
-                      id="date"
-                      label="تا تاریخ"
-                      type="date"
-                      defaultValue={moment(new Date()).format('YYYY-MM-DD')}
-                      className={classes.textField}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      onChange={this.handleChange('toDate')}
-                    /> */}
                 </form>
         </div>
   );
 }
     }
+
+    function mapStateToProps(state) {
+      return {
+        fromDate: getFromDate(state),
+        toDate: getToDate(state),
+      };
+    }
 TimeFilter.propTypes = {
   classes: PropTypes.object.isRequired,
-  filterTimeChange: PropTypes.func.isRequired,
+  fromDate: PropTypes.instanceOf(Date),
+  toDate: PropTypes.instanceOf(Date),
+  classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(TimeFilter);
+export default  connect(mapStateToProps) (withStyles(styles)(TimeFilter));

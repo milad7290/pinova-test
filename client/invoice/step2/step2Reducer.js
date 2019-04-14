@@ -38,7 +38,6 @@ const Step2Reducer = (state = initialState, action) => {
 };
 
 export const getStates = (state) => {
-  console.log('getRows state',state);
   const states=Object.keys(state.step2.iranStates)
   return states
 };

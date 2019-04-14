@@ -14,8 +14,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import green from '@material-ui/core/colors/green';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { setName,setPrice,setQuantity } from './productActions';
-import { getLoading ,getName,getPrice,getQuantity} from './productReducer';
+import { setName,setPrice,setQuantity,setPristanFalse,addClose,addOpen } from './productActions';
+import { getLoading ,getName,getPrice,getQuantity,getPristainStatus,getOpenOrClose} from './productReducer';
 function getModalStyle() {
   const top = 50 ;
   const left = 50 ;
@@ -66,17 +66,6 @@ class NewProduct extends React.PureComponent {
     this.quantityInput = React.createRef();
     this.priceInput = React.createRef();
   }
-  state = {
-    pristan:{
-      nameStatus:true,
-      quantityStatus:true,
-      priceStatus:true,
-    },
-    open: false,
-    errorMessage:'',
-    loading: false,
-    success: false,
-  };
   componentDidMount = () => {
   }
 
@@ -91,41 +80,15 @@ class NewProduct extends React.PureComponent {
           return
          }
         this.props.dispatch(setName(value))
-        this.setState(
-          {
-            // [name]: value,
-            pristan:
-            {
-              nameStatus:false,
-            quantityStatus:true,
-            priceStatus:true
-          },
-          })
         break;
         case 'quantity':
         this.props.dispatch(setQuantity(value))
-        this.setState(
-          {
-            pristan:
-            {quantityStatus:false,
-              nameStatus:true,
-              priceStatus:true
-          },
-          })
         break;
         case 'price':
         if (!number.test(value)&& value!=='') {
           return
          }
          this.props.dispatch(setPrice(value))
-        this.setState(
-          {
-            pristan:
-            {priceStatus:false,
-              nameStatus:true,
-              quantityStatus:true,
-          },
-          })
         break;
       default:
         break;
@@ -136,12 +99,7 @@ class NewProduct extends React.PureComponent {
    clickSubmit = () => {
 
     if (this.props.name===''||this.props.quantity===''||this.props.price==='') {
-      this.setState(
-        {pristan:
-          {nameStatus:false,
-          quantityStatus:false,
-          priceStatus:false},
-        })
+      this.props.dispatch(setPristanFalse())
       return;
     }
     const product={
@@ -151,10 +109,11 @@ class NewProduct extends React.PureComponent {
     }
 
     this.props.selectedRowChange(product);
+    this.props.dispatch(addClose())
   }
 
   handleClickOpen = () => {
-    this.setState({ open: true });
+    this.props.dispatch(addOpen())
   };
 
   handleClickEnter= name => event => {
@@ -180,13 +139,13 @@ class NewProduct extends React.PureComponent {
   }
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.props.dispatch(addClose())
   };
 
   render() {
     const { classes } = this.props;
     const buttonClassname = classNames({
-      [classes.buttonSuccess]: this.state.success,
+      [classes.buttonSuccess]: false,
     });
     return (
       <div>
@@ -194,13 +153,13 @@ class NewProduct extends React.PureComponent {
                    <AddCircle />
          </IconButton>
                 <Dialog
-                        open={this.state.open}
+                        open={this.props.open}
                         aria-labelledby="form-dialog-title"
                         >
                         <DialogTitle id="form-dialog-title">افزودن محصول</DialogTitle>
                             <DialogContent>
                                 <DialogContentText>
-                                تمامی فیلد ها رو پر کنید! <span >{this.state.errorMessage} </span>
+                                تمامی فیلد ها رو پر کنید! 
                                 </DialogContentText>
                                 <TextField
                                 InputLabelProps={{
@@ -212,7 +171,7 @@ class NewProduct extends React.PureComponent {
                                 inputRef={this.nameInput} 
                                 autoFocus
                                 required
-                                error={this.props.name==='' && !this.state.pristan.nameStatus}
+                                error={this.props.name==='' && !this.props.pristanStatus.name}
                                 margin="dense"
                                 id="name"
                                 label="نام"                                
@@ -230,7 +189,7 @@ class NewProduct extends React.PureComponent {
                                 }}
                                 onKeyPress={this.handleClickEnter('price')}
                                 inputRef={this.quantityInput} 
-                                error={this.props.quantity==='' && !this.state.pristan.quantityStatus} 
+                                error={this.props.quantity==='' && !this.props.pristanStatus.quantity} 
                                 margin="dense"
                                 id="quantity"
                                 label="تعداد"
@@ -248,7 +207,7 @@ class NewProduct extends React.PureComponent {
                                 onKeyPress={this.handleClickEnter('save')}
                                 inputRef={this.priceInput} 
                                 required
-                                error={this.props.price==='' && !this.state.pristan.priceStatus}
+                                error={this.props.price==='' && !this.props.pristanStatus.price}
                                 margin="dense"
                                 id="price"
                                 label="قیمت"
@@ -285,6 +244,8 @@ function mapStateToProps(state) {
     name: getName(state),
     quantity: getQuantity(state),
     price: getPrice(state),
+    pristanStatus:getPristainStatus(state),
+    open:getOpenOrClose(state)
   };
 }
 NewProduct.propTypes = {
@@ -294,6 +255,8 @@ NewProduct.propTypes = {
   name:PropTypes.string,
   quantity:PropTypes.string,
   price:PropTypes.string,
+  pristanStatus:PropTypes.object,
+  open:PropTypes.bool,
 };
 
 export default connect(mapStateToProps)(withStyles(styles)(NewProduct))

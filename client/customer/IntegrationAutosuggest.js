@@ -96,7 +96,8 @@ class IntegrationAutosuggest extends React.PureComponent {
   handleSuggestionsFetchRequested = ({ value }) => {
     this.props.dispatch(fetchCustomers(value))
   };
-
+  handleSuggestionsClearRequested = () => {
+  };
   handleChange = name => (event, { newValue }) => {
     const persian = /^[\u0600-\u06FF\s0-9]+$/;
     if (!persian.test(newValue)&& newValue!=='') {
