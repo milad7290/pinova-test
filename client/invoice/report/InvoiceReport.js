@@ -236,8 +236,6 @@ InvoiceReport.propTypes = {
   invoices: PropTypes.array,
   filterType: PropTypes.string,
   filterTypeSearch: PropTypes.string,
-  // fromDate: PropTypes.instanceOf(Date),
-  // toDate: PropTypes.instanceOf(Date),
   pageNumber: PropTypes.number,
   open: PropTypes.bool,
   classes: PropTypes.object.isRequired,
