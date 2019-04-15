@@ -5,7 +5,8 @@ import {
   UPDATE_STEP1_ORDER,
   RESET_STEP1,
   SET_REDIRECT,
-  SET_STEPPER_STEP
+  SET_STEPPER_STEP,
+  SET_SELECTED_PRODUCT,
 } from './step1Actions';
 const initialState = {
   invoiceRows: [],
@@ -14,7 +15,8 @@ const initialState = {
   invoiceNumber:'',
   lable:'',
   activeStep:0,
-  redirect:false
+  redirect:false,
+  selectedProduct:'',
 };
 const Step1Reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -32,6 +34,8 @@ const Step1Reducer = (state = initialState, action) => {
       return {...state,redirect:true};
     case SET_STEPPER_STEP :
       return {...state,activeStep:action.activeStep};
+    case SET_SELECTED_PRODUCT :
+      return {...state,selectedProduct:action.selectedProduct};
       default:
       return state;
   }
@@ -54,5 +58,8 @@ export const getRedirectStatus = (state) => {
 };
 export const getStepperStep = (state) => {
   return state.step1.activeStep
+};
+export const getSelectedProduct = (state) => {
+  return state.invoices.selectedProduct
 };
 export default Step1Reducer;

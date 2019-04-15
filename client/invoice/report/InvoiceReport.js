@@ -30,7 +30,7 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
-    position: 'inherit',
+    position: 'absolute',
     bottom: 0,
     width: '90%',
     backgroundColor: '#607d8b',

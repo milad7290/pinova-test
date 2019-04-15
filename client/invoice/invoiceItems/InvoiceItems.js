@@ -13,9 +13,9 @@ import NewProduct from '../../product/NewProduct'
 import { connect } from 'react-redux';
 import { fetchProducts,addProductRequest } from '../../product/productActions';
 import { showSnack,hideSnack } from '../../helper/helperActions';
-import { updateRow } from '../step1/step1Actions';
+import { updateRow ,setSelectedProduct} from '../step1/step1Actions';
 import { getProducts } from '../../product/productReducer';
-import { getRows } from '../step1/step1Reducer';
+import { getRows ,getSelectedProduct } from '../step1/step1Reducer';
 import SimpleSnackbar from '../../helper/SimpleSnackbar'
 import {numberWithoutCommas} from '../../helper/persianNumber'
 
@@ -91,9 +91,6 @@ rTableHead :{
 class InvoiceItems extends PureComponent {
   state={
     selectedProduct:'',
-    open:false,
-    message:'',
-    messageType:'',
   }
   componentDidMount = () => {
     this.props.dispatch(fetchProducts());
@@ -112,7 +109,7 @@ class InvoiceItems extends PureComponent {
            
   }
   handlepProductIdChange = productId => {
-    this.state.selectedProduct=productId.toString();
+    this.props.dispatch(setSelectedProduct(productId.toString()));
   };
   getIndex = productId => {
     const index= this.props.rows.findIndex(x=>x.productId=== productId);
@@ -126,7 +123,6 @@ class InvoiceItems extends PureComponent {
       this.props.dispatch(showSnack('این کالا قبلا انتخاب شده است!','war'))
       return;
     }
-    this.setState({ [name]: value });
     let rows=[...this.props.rows]
     rows[index].productId=value;
     rows[index].productName=this.props.products.find(x=>x._id===value).name;
@@ -143,8 +139,7 @@ class InvoiceItems extends PureComponent {
    this.props.dispatch(addProductRequest(product)).then(res=>{
     this.props.dispatch(showSnack('محصول با موفقیت اضافه شد','suc'))
     addedProduct=res.product;
-    const index= this.props.rows.findIndex(x=>x.productId=== this.state.selectedProduct); 
-    this.setState({ [index]: addedProduct._id });
+    const index= this.props.rows.findIndex(x=>x.productId=== this.props.selectedProduct); 
     let rows=[...this.props.rows]
     rows[index].productName=addedProduct.name;
     rows[index].productId=addedProduct._id;
@@ -162,7 +157,6 @@ class InvoiceItems extends PureComponent {
     if (value<1) {
       return
     }
-    this.setState({ [name]: event.target.value });
     let rows=[...this.props.rows]
     rows[index].count=value;
     rows[index].totalPrice=rows[index].price * rows[index].count;
@@ -248,7 +242,6 @@ class InvoiceItems extends PureComponent {
                               <TextField
                                         id="standard-number"
                                         label="تعداد"
-                                        value={this.state.count}
                                         onChange={this.handleCountChange(row.productId.toString())}
                                         type="number"
                                         inputRef={row.countRef} 
@@ -305,12 +298,14 @@ function mapStateToProps(state) {
   return {
     products: (getProducts(state))?getProducts(state):[],
     rows: getRows(state),
+    selectedProduct: getSelectedProduct(state)
   };
 }
 InvoiceItems.propTypes = {
   classes: PropTypes.object.isRequired,
   products: PropTypes.array,
   rows: PropTypes.array,
+  selectedProduct:PropTypes.string,
 }
 
 export default connect(mapStateToProps)( withStyles(styles)(InvoiceItems))

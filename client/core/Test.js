@@ -105,7 +105,7 @@ class Home extends Component {
       })
   }
   clickBtn=()=>{
-    this.setState({suggestionTitle:'assdsds'})
+    // this.setState({suggestionTitle:'assdsds'})
   }
   render() {
     console.log('render');

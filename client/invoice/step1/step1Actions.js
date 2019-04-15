@@ -9,6 +9,7 @@ export const UPDATE_STEP1_ROWS_UPDATE = 'UPDATE_STEP1_ROWS_UPDATE';
 export const RESET_STEP1 = 'RESET_STEP1';
 export const SET_STEPPER_STEP = 'SET_STEPPER_STEP';
 export const SET_REDIRECT = 'SET_REDIRECT'
+export const SET_SELECTED_PRODUCT = 'SET_SELECTED_PRODUCT';
 
 export function updateCustomer(invoiceCustomer) {
   return {
@@ -56,5 +57,11 @@ export function setStepperStep(activeStep) {
 export function setRedirect() {
   return {
     type: SET_REDIRECT,
+  };
+}
+export function setSelectedProduct(selectedProduct) {
+  return {
+    type: SET_SELECTED_PRODUCT,
+    selectedProduct,
   };
 }

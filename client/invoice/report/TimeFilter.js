@@ -92,8 +92,6 @@ class TimeFilter extends React.Component{
     }
 TimeFilter.propTypes = {
   classes: PropTypes.object.isRequired,
-  // fromDate: PropTypes.instanceOf(Date),
-  // toDate: PropTypes.instanceOf(Date),
   classes: PropTypes.object.isRequired,
 };
 
