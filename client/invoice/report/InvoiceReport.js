@@ -33,7 +33,7 @@ const styles = theme => ({
     position: 'absolute',
     bottom: 0,
     width: '90%',
-    backgroundColor: '#607d8b',
+    backgroundColor: '#3f51b5',
     color:'black'
   },
   appBar: {

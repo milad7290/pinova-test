@@ -64,7 +64,7 @@ const styles = theme => ({
     marginBottom: theme.spacing.unit,
   },
   button: {
-    backgroundColor: '#607d8b',
+    backgroundColor: '#3f51b5',
     color:'black'
   },
   wrapper: {
