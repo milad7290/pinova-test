@@ -2,8 +2,8 @@ import { SHOW_SNACK, HIDE_SNACK } from "./helperActions";
 
 const initialState = {
   open: false,
-  message: "",
-  type: ""
+  message: '',
+  type: ''
 };
 
 const HelperReducer = (state = initialState, action) => {

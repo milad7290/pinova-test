@@ -10,7 +10,7 @@ import moment from "moment-jalaali";
 import { connect } from "react-redux";
 import { getInvoiceNumber } from "./step1Reducer";
 const styles = theme => ({});
-class NewInvoiceStep1 extends Component {
+class NewInvoiceStep1 extends React.PureComponent {
   
   state = {
     now: new Date().toDateString()

@@ -132,14 +132,12 @@ class NewInvoiceStepper extends React.Component {
   };
 
   handleNext = () => {
-    //TODO run one method at same time
     // remove persian charachter from codes
     // TODO remove distapch
-    const total = this.checkForRows().total;
-    const aftercheck = this.checkForRows().checkedRows;
+    const {total,checkedRows} = this.checkForRows();
     switch (this.props.activeStep) {
       case 0:
-        if (aftercheck.length === 0 || this.props.invoiceCustomer === "") {
+        if (checkedRows.length === 0 || this.props.invoiceCustomer === "") {
           const message =
             this.props.invoiceCustomer === ""
               ? "اطلاعات مربوط به نام و نام خانوادگی را تکمیل کنید"
@@ -179,7 +177,7 @@ class NewInvoiceStepper extends React.Component {
           this.props.invoiceCustomerIdInfo.lable === this.props.invoiceCustomer
             ? this.props.invoiceCustomerIdInfo.invoiceCustomerId
             : "",
-        invoiceRows: aftercheck,
+        invoiceRows: checkedRows,
         address: {
           state: this.props.selectedState,
           city: this.props.selectedCity
@@ -213,13 +211,12 @@ class NewInvoiceStepper extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes ,activeStep } = this.props;
     //TODO remove this line
     const buttonClassname = classNames({
       [classes.buttonSuccess]: false
     });
     const steps = getSteps(); // TODO this is wrong why?
-    const { activeStep } = this.props;
     if (this.props.redirect) {
       return <Redirect to={"/"} />;
     }
