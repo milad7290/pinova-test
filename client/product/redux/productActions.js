@@ -1,4 +1,13 @@
-import { productList, create } from "../api-product";
+import {
+  productList,
+  create
+} from "../api-product";
+import {
+  showSnack
+} from '../../helper/redux/helperActions'
+import {
+  updateRow
+} from '../../invoice/step1/redux/step1Actions'
 
 export const ADD_PRODUCT = "ADD_PRODUCT";
 export const SET_LOADING = "SET_LOADING";
@@ -46,11 +55,31 @@ export function setValue(value, type) {
   }
 }
 
-export function addProductRequest(product) {
+export function addProductRequest(product, rows, selectedProduct) {
   return dispatch => {
     dispatch(setLoading(true));
     return create(product).then(res => {
       dispatch(setLoading(false));
+      dispatch(showSnack("محصول با موفقیت اضافه شد", "suc"))
+      const index = rows.findIndex(
+        x => x.productId === selectedProduct
+      );
+      rows[index].productName = res.addedProduct.name;
+      rows[index].productId = res.addedProduct._id;
+      rows[index].price = res.addedProduct.price;
+      rows[index].totalPrice = rows[index].price * rows[index].count;
+      if (index === rows.length - 1) {
+        const productId = rows[rows.length - 1]
+        const newRow = {
+          productId: productId + 0,
+          productName: "",
+          count: 1,
+          price: null,
+          totalPrice: null
+        };
+        rows.push(newRow);
+      }
+      dispatch(updateRow(rows));
       return dispatch(addProduct(res.addedProduct));
     });
   };

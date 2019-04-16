@@ -141,7 +141,6 @@ class InvoiceItem extends PureComponent {
             label="تعداد"
             onChange={this.props.CountChange(this.props.row.productId.toString())}
             type="number"
-            inputRef={this.props.row.countRef}
             defaultValue={1}
             className={classes.textField}
             InputLabelProps={{

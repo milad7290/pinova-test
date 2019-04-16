@@ -5,7 +5,8 @@ import {
   UPDATE_STEP2_POST_TYPE,
   UPDATE_STEP2_DELIVERY_AMOUNT,
   UPDATE_STEP2_DELIVERY_TIME,
-  RESET_STEP2
+  RESET_STEP2,
+  SET_REDIRECT
 } from "./step2Actions";
 
 const initialState = {
@@ -15,7 +16,8 @@ const initialState = {
   selectedCity: "",
   deliveryAmount: "",
   deliveryTime: "",
-  postType: ""
+  postType: "",
+  redirect:false
 };
 
 const Step2Reducer = (state = initialState, action) => {
@@ -38,6 +40,8 @@ const Step2Reducer = (state = initialState, action) => {
       return { ...state, deliveryTime: action.deliveryTime };
     case RESET_STEP2:
       return initialState;
+    case SET_REDIRECT:
+      return { ...state, redirect: true };
     default:
       return state;
   }

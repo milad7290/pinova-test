@@ -98,7 +98,6 @@ class InvoiceItems extends PureComponent {
       productId: "0",
       productName: "",
       count: 1,
-      countRef: React.createRef(),
       price: null,
       totalPrice: null
     };
@@ -141,21 +140,19 @@ class InvoiceItems extends PureComponent {
     rows[index].price = this.props.products.find(x => x._id === value).price;
     rows[index].totalPrice = rows[index].price * rows[index].count;
     this.props.updateRow(rows);
-    this.props.invoiceRows[index].countRef.current.focus();
     if (index === this.props.invoiceRows.length - 1) {
       this.handleClickNewRow();
     }
   };
 
   selectedRowProductChange = product => {
-    let addedProduct;
-    this.props.addProductRequest(product);
+        let rows = [...this.props.invoiceRows];
+    this.props.addProductRequest(product, rows,this.state.selectedProduct);
     // this.props.showSnack("محصول با موفقیت اضافه شد", "suc");
     // addedProduct = this.props.products[this.props.products.length];
     // const index = this.props.invoiceRows.findIndex(
     //   x => x.productId === this.state.selectedProduct
     // );
-    // let rows = [...this.props.invoiceRows];
     // rows[index].productName = addedProduct.name;
     // rows[index].productId = addedProduct._id;
     // rows[index].price = addedProduct.price;
@@ -193,7 +190,6 @@ class InvoiceItems extends PureComponent {
       productId: productId + 0,
       productName: "",
       count: 1,
-      countRef: React.createRef(),
       price: null,
       totalPrice: null
     };

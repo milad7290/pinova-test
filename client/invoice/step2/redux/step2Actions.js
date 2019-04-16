@@ -4,6 +4,7 @@ export const UPDATE_STEP2_SELECTED_STATE = "UPDATE_STEP2_SELECTED_STATE";
 export const UPDATE_STEP2_SELECTED_CITY = "UPDATE_STEP2_SELECTED_CITY";
 export const UPDATE_STEP2_POST_TYPE = "UPDATE_STEP2_POST_TYPE";
 export const UPDATE_STEP2_DELIVERY_AMOUNT = "UPDATE_STEP2_DELIVERY_AMOUNT";
+export const SET_REDIRECT = "SET_REDIRECT";
 export const UPDATE_STEP2_DELIVERY_TIME = "UPDATE_STEP2_DELIVERY_TIME";
 export const RESET_STEP2 = "RESET_STEP2";
 
@@ -62,3 +63,9 @@ export function resetStep2() {
     type: RESET_STEP2
   };
 }
+export function setRedirect() {
+  return {
+    type: SET_REDIRECT
+  };
+}
+

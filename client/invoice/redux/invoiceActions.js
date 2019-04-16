@@ -1,6 +1,6 @@
 import { invoiceListWithFilter, create } from "../api-invoice";
 import { resetStep1 } from "../step1/redux/step1Actions";
-import { resetStep2 } from "../step2/redux/step2Actions";
+import { resetStep2, setRedirect } from "../step2/redux/step2Actions";
 export const ADD_INVOICE = "ADD_INVOICE";
 export const ADD_INVOICES = "ADD_INVOICES";
 export const SET_LOADING_INVOICE = "SET_LOADING_INVOICE";
@@ -42,6 +42,7 @@ export function addInvoiceRequest(invoice) {
       dispatch(setSaved(true));
       dispatch(resetStep1());
       dispatch(resetStep2());
+      dispatch(setRedirect());
       return dispatch(addInvoice(res.addedInvoice));
     });
   };

@@ -46,7 +46,8 @@ import {
   getCities,
   getStates,
   getSelectedCity,
-  getSelectedState
+  getSelectedState,
+  getRedirect
 } from "./step2/redux/step2Selector";
 
 import { fetchCustomers } from "../customer/redux/customerActions";
@@ -284,7 +285,7 @@ class NewInvoiceStepper extends React.Component {
       [classes.buttonSuccess]: false
     });
     const steps = getSteps(); // TODO this is wrong why?
-    if (this.state.redirect) {
+    if (this.props.redirect) {
       return <Redirect to={"/"} />;
     }
     return (
@@ -356,6 +357,7 @@ const mapStateToProps = state => {
     isLoadingProduct: getProductLoading(state),
     invoiceRows: getRows(state),
     invoiceCustomer: getCustomer(state),
+    redirect: getRedirect(state),
     invoiceCustomerIdInfo: getCustomerId(state),
     invoiceNumber: getInvoiceNumber(state),
     snackInfo: getSnackInfo(state),
@@ -406,8 +408,8 @@ const mapDispatchToProps = dispatch => {
     showSnack: (message, messageType) => {
       dispatch(showSnack(message, messageType));
     },
-    addProductRequest: product => {
-      dispatch(addProductRequest(product));
+    addProductRequest: (product, rows, selectedProduct) => {
+      dispatch(addProductRequest(product, rows, selectedProduct));
     },
     hideSnack: () => {
       dispatch(hideSnack());
@@ -442,6 +444,7 @@ NewInvoiceStepper.propTypes = {
   invoiceCustomer: PropTypes.string,
   invoiceCustomerIdInfo: PropTypes.object,
   snackInfo: PropTypes.object,
+  redirect: PropTypes.bool,
 
   order: PropTypes.string,
   customers: PropTypes.array,

@@ -26,4 +26,8 @@ export const getDeliveryAmount = state => {
 export const getDeliveryTime = state => {
   return state.step2.deliveryTime;
 };
+export const getRedirect = state => {
+  return state.step2.redirect;
+};
+
 
