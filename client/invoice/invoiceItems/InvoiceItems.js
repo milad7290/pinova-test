@@ -150,20 +150,20 @@ class InvoiceItems extends PureComponent {
   selectedRowProductChange = product => {
     let addedProduct;
     this.props.addProductRequest(product);
-    this.props.showSnack("محصول با موفقیت اضافه شد", "suc");
-    addedProduct = this.props.products[this.props.products.length];
-    const index = this.props.invoiceRows.findIndex(
-      x => x.productId === this.state.selectedProduct
-    );
-    let rows = [...this.props.invoiceRows];
-    rows[index].productName = addedProduct.name;
-    rows[index].productId = addedProduct._id;
-    rows[index].price = addedProduct.price;
-    rows[index].totalPrice = rows[index].price * rows[index].count;
-    this.props.updateRow(rows);
-    if (index === this.props.invoiceRows.length - 1) {
-      this.handleClickNewRow();
-    }
+    // this.props.showSnack("محصول با موفقیت اضافه شد", "suc");
+    // addedProduct = this.props.products[this.props.products.length];
+    // const index = this.props.invoiceRows.findIndex(
+    //   x => x.productId === this.state.selectedProduct
+    // );
+    // let rows = [...this.props.invoiceRows];
+    // rows[index].productName = addedProduct.name;
+    // rows[index].productId = addedProduct._id;
+    // rows[index].price = addedProduct.price;
+    // rows[index].totalPrice = rows[index].price * rows[index].count;
+    // this.props.updateRow(rows);
+    // if (index === this.props.invoiceRows.length - 1) {
+    //   this.handleClickNewRow();
+    // }
   };
 
   handleCountChange = name => event => {
