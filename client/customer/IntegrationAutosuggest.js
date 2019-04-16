@@ -1,18 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import deburr from 'lodash/deburr';
-import Autosuggest from 'react-autosuggest';
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
-import TextField from '@material-ui/core/TextField';
-import Paper from '@material-ui/core/Paper';
-import MenuItem from '@material-ui/core/MenuItem';
-import { withStyles } from '@material-ui/core/styles';
-import { fetchCustomers} from '../customer/customerActions';
-import { updateCustomer, updateCustomerId} from '../invoice/step1/step1Actions';
-import { getCustomers } from '../customer/customerReducer';
-import { getCustomer  } from '../invoice/step1/step1Reducer';
-import { connect } from 'react-redux';
+import React from "react";
+import PropTypes from "prop-types";
+import deburr from "lodash/deburr";
+import Autosuggest from "react-autosuggest";
+import match from "autosuggest-highlight/match";
+import parse from "autosuggest-highlight/parse";
+import TextField from "@material-ui/core/TextField";
+import Paper from "@material-ui/core/Paper";
+import MenuItem from "@material-ui/core/MenuItem";
+import { withStyles } from "@material-ui/core/styles";
+import { fetchCustomers } from "../customer/customerActions";
+import {
+  updateCustomer,
+  updateCustomerId
+} from "../invoice/step1/step1Actions";
+import { getCustomers } from "../customer/customerReducer";
+import { getCustomer } from "../invoice/step1/step1Reducer";
+import { connect } from "react-redux";
 
 function renderInputComponent(inputProps) {
   const { classes, inputRef = () => {}, ref, ...other } = inputProps;
@@ -26,8 +29,8 @@ function renderInputComponent(inputProps) {
           inputRef(node);
         },
         classes: {
-          input: classes.input,
-        },
+          input: classes.input
+        }
       }}
       {...other}
     />
@@ -50,60 +53,64 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
             <strong key={String(index)} style={{ fontWeight: 300 }}>
               {part.text}
             </strong>
-          ),
+          )
         )}
       </div>
     </MenuItem>
   );
 }
+
 const styles = theme => ({
   root: {
     height: 50,
-    flexGrow: 1,
+    flexGrow: 1
   },
   container: {
-    position: 'relative',
+    position: "relative"
   },
   suggestionsContainerOpen: {
-    position: 'absolute',
+    position: "absolute",
     zIndex: 1,
     marginTop: theme.spacing.unit,
     left: 0,
-    right: 0,
+    right: 0
   },
   suggestion: {
-    display: 'block',
+    display: "block"
   },
   suggestionsList: {
     margin: 0,
     padding: 0,
-    listStyleType: 'none',
+    listStyleType: "none"
   },
   divider: {
-    height: theme.spacing.unit * 2,
-  },
+    height: theme.spacing.unit * 2
+  }
 });
 
 class IntegrationAutosuggest extends React.PureComponent {
 
-   getSuggestionValue=(suggestion)=> {
-    this.props.dispatch(updateCustomerId(suggestion.value,suggestion.label))
+  getSuggestionValue = suggestion => {
+    this.props.dispatch(updateCustomerId(suggestion.value, suggestion.label));
     return suggestion.label;
-  }
+  };
+
   componentDidMount = () => {
-    this.props.dispatch(updateCustomer(this.props.customer))
-  }
+    this.props.dispatch(updateCustomer(this.props.customer));
+  };
+
   handleSuggestionsFetchRequested = ({ value }) => {
-    this.props.dispatch(fetchCustomers(value))
+    this.props.dispatch(fetchCustomers(value));
   };
-  handleSuggestionsClearRequested = () => {
-  };
+
+  handleSuggestionsClearRequested = () => {};
+
   handleChange = name => (event, { newValue }) => {
     const persian = /^[\u0600-\u06FF\s0-9]+$/;
-    if (!persian.test(newValue)&& newValue!=='') {
-      return
-     }
-     this.props.dispatch(updateCustomer(newValue))
+    if (!persian.test(newValue) && newValue !== "") {
+      return;
+    }
+    this.props.dispatch(updateCustomer(newValue));
   };
 
   render() {
@@ -114,8 +121,8 @@ class IntegrationAutosuggest extends React.PureComponent {
       suggestions: this.props.customers,
       onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
       onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
-      getSuggestionValue:this.getSuggestionValue,
-      renderSuggestion,
+      getSuggestionValue: this.getSuggestionValue,
+      renderSuggestion
     };
 
     return (
@@ -124,15 +131,15 @@ class IntegrationAutosuggest extends React.PureComponent {
           {...autosuggestProps}
           inputProps={{
             classes,
-            placeholder: 'نام و نام خانوادگی',
+            placeholder: "نام و نام خانوادگی",
             value: this.props.customer,
-            onChange: this.handleChange('single'),
+            onChange: this.handleChange("single")
           }}
           theme={{
             container: classes.container,
             suggestionsContainerOpen: classes.suggestionsContainerOpen,
             suggestionsList: classes.suggestionsList,
-            suggestion: classes.suggestion,
+            suggestion: classes.suggestion
           }}
           renderSuggestionsContainer={options => (
             <Paper {...options.containerProps} square>
@@ -144,17 +151,24 @@ class IntegrationAutosuggest extends React.PureComponent {
     );
   }
 }
-IntegrationAutosuggest.need = [() => { return fetchCustomers(); }];
+
+IntegrationAutosuggest.need = [
+  () => {
+    return fetchCustomers();
+  }
+];
 function mapStateToProps(state) {
   return {
     customers: getCustomers(state),
-    customer: getCustomer(state),
+    customer: getCustomer(state)
   };
 }
 IntegrationAutosuggest.propTypes = {
   classes: PropTypes.object.isRequired,
   customers: PropTypes.array,
-  customer: PropTypes.string,
+  customer: PropTypes.string
 };
 
-export default connect(mapStateToProps)( withStyles(styles)(IntegrationAutosuggest));
+export default connect(mapStateToProps)(
+  withStyles(styles)(IntegrationAutosuggest)
+);

@@ -1,20 +1,17 @@
-import {
-  customerList
-} from './api-customer';
+import { customerList } from "./api-customer";
 
-export const ADD_CUSTOMERS = 'ADD_CUSTOMERS';
-export const UPDSTE_AUTO = 'UPDSTE_AUTO';
-
+export const ADD_CUSTOMERS = "ADD_CUSTOMERS";
+export const UPDSTE_AUTO = "UPDSTE_AUTO";
 
 export function addCustomers(customers) {
   return {
     type: ADD_CUSTOMERS,
-    customers,
+    customers
   };
 }
 
 export function fetchCustomers(value) {
-  return (dispatch) => {
+  return dispatch => {
     return customerList(value).then(res => {
       dispatch(addCustomers(res.customers));
     });

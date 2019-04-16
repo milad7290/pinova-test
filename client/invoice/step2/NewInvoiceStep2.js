@@ -1,38 +1,34 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {withStyles} from '@material-ui/core/styles'
-import StateAndCity from './StateAndCity'
-import PostType from './PostType'
-import DeliveryTime from './DeliveryTime'
-const styles = theme => ({
-
-})
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import StateAndCity from "./StateAndCity";
+import PostType from "./PostType";
+import DeliveryTime from "./DeliveryTime";
+const styles = theme => ({});
 class NewInvoiceStep2 extends Component {
-  componentDidMount = () => {
- 
-  }
+  componentDidMount = () => {};
   render() {
-    const {classes} = this.props
+    const { classes } = this.props;
     return (
-<div>
-          <div>
-          <StateAndCity />    
-          </div>
-     
-          <div>
-          <PostType />    
-          </div>
+      <div>
+        <div>
+          <StateAndCity />
+        </div>
 
-          <div>
-          <DeliveryTime  />
-          </div>
-</div>
-    )
+        <div>
+          <PostType />
+        </div>
+
+        <div>
+          <DeliveryTime />
+        </div>
+      </div>
+    );
   }
 }
 
 NewInvoiceStep2.propTypes = {
-  classes: PropTypes.object.isRequired,
-}
+  classes: PropTypes.object.isRequired
+};
 
-export default withStyles(styles)(NewInvoiceStep2)
+export default withStyles(styles)(NewInvoiceStep2);

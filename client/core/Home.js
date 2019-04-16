@@ -1,26 +1,26 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {withStyles} from '@material-ui/core/styles'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card';
-import {Link} from 'react-router-dom'
-import Button from '@material-ui/core/Button'
-import Footer from './Footer'
-import withFooter from '../helper/withFooter'
-import Switch from '@material-ui/core/Switch';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import Card from "@material-ui/core/Card";
+import { Link } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import Footer from "./Footer";
+import withFooter from "../helper/withFooter";
+import Switch from "@material-ui/core/Switch";
 const styles = theme => ({
   card: {
     flexGrow: 1,
     margin: 30,
-    textAlign: 'center',
+    textAlign: "center"
   }
-})
+});
 class Home extends Component {
   constructor(props) {
     super(props);
     // console.log('constructor');
   }
-  
+
   // componentWillMount = () => {
   //   console.log('componentWillMount');
   // }
@@ -50,40 +50,35 @@ class Home extends Component {
   // }
   render() {
     // console.log('render');
-    const {classes} = this.props
+    const { classes } = this.props;
     return (
       <div>
-          <div>
+        <div>
           <Card className={classes.card}>
-            <Grid  container spacing={0}>
+            <Grid container spacing={0}>
               <Grid item xs={6} sm={6}>
-                        <Link to="/invoice/add">
-              <Button >ثبت فاکتور جدید</Button>
-            </Link>
+                <Link to="/invoice/add">
+                  <Button>ثبت فاکتور جدید</Button>
+                </Link>
               </Grid>
               <Grid item xs={6} sm={6}>
                 <Link to="/invoice/report">
-              <Button >گزارش فروش</Button>
-            </Link>
+                  <Button>گزارش فروش</Button>
+                </Link>
               </Grid>
             </Grid>
-            </Card>
-          </div>
+          </Card>
         </div>
-    )
+      </div>
+    );
   }
 }
 
 Home.propTypes = {
   classes: PropTypes.object.isRequired
-}
+};
 
-export default  withStyles(styles)(Home)
-
-
-
-
-
+export default withStyles(styles)(Home);
 
 // import React, {Component} from 'react'
 // import PropTypes from 'prop-types'
@@ -113,7 +108,7 @@ export default  withStyles(styles)(Home)
 //     messageType:'suc',
 //     message:'فاکتور با موفقیت اضافه شد',
 //   }
-  
+
 //   componentWillMount = () => {
 //     console.log('componentWillMount');
 //   }
@@ -192,4 +187,3 @@ export default  withStyles(styles)(Home)
 // }
 
 // export default connect(mapStateToProps)( withStyles(styles)(Home))
-
