@@ -130,7 +130,7 @@ class NewInvoiceStepper extends React.Component {
     return {total,checkedRows};
   }
   
-  handleNext = () => {
+  handleNext = () => {    
   const total= this.checkForRows().total;
   const aftercheck=this.checkForRows().checkedRows;
   switch (this.props.activeStep) {

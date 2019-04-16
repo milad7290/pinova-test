@@ -18,44 +18,38 @@ const styles = theme => ({
 class Home extends Component {
   constructor(props) {
     super(props);
-    console.log('constructor');
-  }
-  state={
-    suggestionTitle: "Latest Products",
+    // console.log('constructor');
   }
   
-  componentWillMount = () => {
-    console.log('componentWillMount');
-  }
-  componentDidMount = () => {
-    console.log('componentDidMount');
+  // componentWillMount = () => {
+  //   console.log('componentWillMount');
+  // }
+  // componentDidMount = () => {
+  //   console.log('componentDidMount');
 
-  }
-  componentWillReceiveProps = () => {
-    console.log('componentWillReceiveProps');
+  // }
+  // componentWillReceiveProps = () => {
+  //   console.log('componentWillReceiveProps');
 
-  }
-  shouldComponentUpdate  = () => {
-    console.log('shouldComponentUpdate');
-      return true;
-  }
-  componentWillUpdate  = () => {
-    console.log('componentWillUpdate');
+  // }
+  // shouldComponentUpdate  = () => {
+  //   console.log('shouldComponentUpdate');
+  //     return true;
+  // }
+  // componentWillUpdate  = () => {
+  //   console.log('componentWillUpdate');
 
-  }
-  componentDidUpdate  = () => {
-    console.log('componentDidUpdate');
+  // }
+  // componentDidUpdate  = () => {
+  //   console.log('componentDidUpdate');
 
-  }
-  componentWillUnmount  = () => {
-    console.log('componentWillUnmount');
+  // }
+  // componentWillUnmount  = () => {
+  //   console.log('componentWillUnmount');
 
-  }
-  clickBtn=()=>{
-    // this.setState({suggestionTitle:'assdsds'})
-  }
+  // }
   render() {
-    console.log('render');
+    // console.log('render');
     const {classes} = this.props
     return (
       <div>
@@ -63,7 +57,7 @@ class Home extends Component {
           <Card className={classes.card}>
             <Grid  container spacing={0}>
               <Grid item xs={6} sm={6}>
-                        <Link to="/invoice/addInvoice">
+                        <Link to="/invoice/add">
               <Button >ثبت فاکتور جدید</Button>
             </Link>
               </Grid>

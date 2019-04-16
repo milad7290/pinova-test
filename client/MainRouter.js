@@ -31,7 +31,7 @@ class MainRouter extends Component {
       <Menu/>
       <Switch>
         <Route exact path="/" component={Home}/>
-        <Route path="/invoice/addInvoice" component={NewInvoiceStepper}/>
+        <Route path="/invoice/add" component={NewInvoiceStepper}/>
         <Route path="/invoice/report" component={InvoiceReport}/>
       </Switch>
       {/* <SimpleSnackbar open={this.props.snackInfo.open} close={this.handleClose}

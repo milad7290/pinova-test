@@ -71,7 +71,7 @@ flexElement: {
   display: 'flex !important',
 },
 rTableHead :{
-  backgroundColor:'black',
+  backgroundColor:'#3f51b5cc',
   color:'white',
   	display: 'inline-block',
   	height: 40,
@@ -80,7 +80,7 @@ rTableHead :{
   	width: '37%',
 },
 rTableHeadFirst :{
-  backgroundColor:'black',
+  backgroundColor:'#3f51b5cc',
   color:'white',
   	display: 'inline-block',
   	height: 40,

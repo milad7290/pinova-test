@@ -1,5 +1,5 @@
 import React from 'react'
-import MainRouter from './MainRouter'
+import MainRouter from "./MainRouter";
 import {BrowserRouter} from 'react-router-dom'
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
 import { blueGrey, lightGreen } from '@material-ui/core/colors'

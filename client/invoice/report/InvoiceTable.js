@@ -49,7 +49,7 @@ rTableCell1:{
   width: '25%',
 }
 , rTableHead1 :{
-  backgroundColor:'black',
+  backgroundColor:'#3f51b5cc',
   color:'white',
   	display: 'inline-block',
   	height: 40,
@@ -66,7 +66,7 @@ rTableCell2:{
   width: '20%',
 }
 , rTableHead2 :{
-  backgroundColor:'black',
+  backgroundColor:'#3f51b5cc',
   color:'white',
   	display: 'inline-block',
   	height: 40,
