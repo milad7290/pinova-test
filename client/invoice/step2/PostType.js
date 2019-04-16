@@ -10,8 +10,8 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import { connect } from "react-redux";
-import { updatePostType } from "./step2Actions";
-import { getPostType } from "./step2Reducer";
+import { updatePostType } from "./redux/step2Actions";
+import { getPostType } from "./redux/step2Reducer";
 const styles = theme => ({
   root: {
     display: "flex"
@@ -28,7 +28,7 @@ class PostType extends React.PureComponent {
 
   handleChange = event => {
     const value = event.target.value;
-    this.props.dispatch(updatePostType(value));
+    this.props.updatePostType(value);
   };
 
   render() {
@@ -69,15 +69,16 @@ class PostType extends React.PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    postType: getPostType(state)
-  };
-}
+// const mapStateToProps = (state) => {
+//   return {
+//     postType: getPostType(state)
+//   };
+// }
 
 PostType.propTypes = {
   classes: PropTypes.object.isRequired,
-  postType: PropTypes.string
+  postType: PropTypes.string.isRequired,
+  updatePostType:PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(PostType));
+export default withStyles(styles)(PostType);

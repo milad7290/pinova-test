@@ -7,13 +7,13 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import { withStyles } from "@material-ui/core/styles";
-import { fetchCustomers } from "../customer/customerActions";
+import { fetchCustomers } from "./redux/customerActions";
 import {
   updateCustomer,
   updateCustomerId
-} from "../invoice/step1/step1Actions";
-import { getCustomers } from "../customer/customerReducer";
-import { getCustomer } from "../invoice/step1/step1Reducer";
+} from "../invoice/step1/redux/step1Actions";
+import { getCustomers } from "./redux/customerReducer";
+import { getCustomer } from "../invoice/step1/redux/step1Reducer";
 import { connect } from "react-redux";
 
 function renderInputComponent(inputProps) {
@@ -90,16 +90,16 @@ const styles = theme => ({
 class IntegrationAutosuggest extends React.PureComponent {
 
   getSuggestionValue = suggestion => {
-    this.props.dispatch(updateCustomerId(suggestion.value, suggestion.label));
+    this.props.updateCustomerId(suggestion.value, suggestion.label);
     return suggestion.label;
   };
 
   componentDidMount = () => {
-    this.props.dispatch(updateCustomer(this.props.customer));
+    // this.props.updateCustomer(this.props.invoiceCustomer);
   };
 
   handleSuggestionsFetchRequested = ({ value }) => {
-    this.props.dispatch(fetchCustomers(value));
+    this.props.fetchCustomers(value);
   };
 
   handleSuggestionsClearRequested = () => {};
@@ -109,7 +109,7 @@ class IntegrationAutosuggest extends React.PureComponent {
     if (!persian.test(newValue) && newValue !== "") {
       return;
     }
-    this.props.dispatch(updateCustomer(newValue));
+    this.props.updateCustomer(newValue);
   };
 
   render() {
@@ -131,7 +131,7 @@ class IntegrationAutosuggest extends React.PureComponent {
           inputProps={{
             classes,
             placeholder: "نام و نام خانوادگی",
-            value: this.props.customer,
+            value: this.props.invoiceCustomer,
             onChange: this.handleChange("single")
           }}
           theme={{
@@ -156,18 +156,13 @@ IntegrationAutosuggest.need = [
     return fetchCustomers();
   }
 ];
-function mapStateToProps(state) {
-  return {
-    customers: getCustomers(state),
-    customer: getCustomer(state)
-  };
-}
 IntegrationAutosuggest.propTypes = {
   classes: PropTypes.object.isRequired,
-  customers: PropTypes.array,
-  customer: PropTypes.string
+  customers: PropTypes.array.isRequired,
+  invoiceCustomer: PropTypes.string.isRequired,
+  fetchCustomers:PropTypes.func.isRequired,
+  updateCustomer:PropTypes.func.isRequired,
+  updateCustomerId:PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(
-  withStyles(styles)(IntegrationAutosuggest)
-);
+export default withStyles(styles)(IntegrationAutosuggest)

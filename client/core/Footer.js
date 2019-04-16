@@ -30,7 +30,7 @@ class Footer extends React.PureComponent {
     }
   }
 }
-// function mapStateToProps(state) {
+// const mapStateToProps = (state) => {
 //   return {
 //     isSaved: getSaved(state),
 //   };

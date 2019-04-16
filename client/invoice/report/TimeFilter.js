@@ -6,8 +6,8 @@ import jmoment from "moment-jalaali";
 import JalaliUtils from "@date-io/jalaali";
 import { DatePicker, MuiPickersUtilsProvider } from "material-ui-pickers";
 import { connect } from "react-redux";
-import { setDate } from "../../invoice/invoiceActions";
-import { getFromDate, getToDate } from "../../invoice/invoiceReducer";
+import { setDate } from "../redux/invoiceActions";
+import { getFromDate, getToDate } from "../redux/invoiceReducer";
 
 const styles = theme => ({
   box: {
@@ -32,8 +32,7 @@ class TimeFilter extends React.Component {
 
   handleChange = name => event => {
     if (event) {
-      const value = event._d;
-      this.props.dispatch(setDate(new Date(event._d), name));
+      this.props.setDate(new Date(event._d), name);
     }
   };
 
@@ -81,16 +80,16 @@ class TimeFilter extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    fromDate: getFromDate(state),
-    toDate: getToDate(state)
-  };
-}
+// const mapStateToProps = (state) => {
+//   return {
+//     fromDate: getFromDate(state),
+//     toDate: getToDate(state)
+//   };
+// }
 
 TimeFilter.propTypes = {
   classes: PropTypes.object.isRequired,
-  classes: PropTypes.object.isRequired
+  setDate: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(TimeFilter));
+export default withStyles(styles)(TimeFilter);

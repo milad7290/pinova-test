@@ -9,13 +9,13 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import { connect } from "react-redux";
-import { updateSelectedState, updateSelectedCity } from "./step2Actions";
+import { updateSelectedState, updateSelectedCity } from "./redux/step2Actions";
 import {
   getStates,
   getCities,
   getSelectedCity,
   getSelectedState
-} from "./step2Reducer";
+} from "./redux/step2Reducer";
 const styles = theme => ({
   root: {
     width: "60%"
@@ -29,12 +29,12 @@ class StateAndCity extends PureComponent {
 
   handleStateChange = name => event => {
     const value = event.target.value;
-    this.props.dispatch(updateSelectedState(value));
+    this.props.updateSelectedState(value);
   };
 
   handleCityChange = name => event => {
     const value = event.target.value;
-    this.props.dispatch(updateSelectedCity(value));
+    this.props.updateSelectedCity(value);
   };
 
   render() {
@@ -98,21 +98,23 @@ class StateAndCity extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    states: getStates(state),
-    cities: getCities(state),
-    selectedCity: getSelectedCity(state),
-    selectedState: getSelectedState(state)
-  };
-}
+// const mapStateToProps = (state) => {
+//   return {
+//     states: getStates(state),
+//     cities: getCities(state),
+//     selectedCity: getSelectedCity(state),
+//     selectedState: getSelectedState(state)
+//   };
+// }
 
 StateAndCity.propTypes = {
   classes: PropTypes.object.isRequired,
-  states: PropTypes.array,
-  cities: PropTypes.array,
-  selectedCity: PropTypes.string,
-  selectedState: PropTypes.string
+  states: PropTypes.array.isRequired,
+  cities: PropTypes.array.isRequired,
+  selectedCity: PropTypes.string.isRequired,
+  selectedState: PropTypes.string.isRequired,
+  updateSelectedState:PropTypes.func.isRequired,
+  updateSelectedCity:PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(StateAndCity));
+export default withStyles(styles)(StateAndCity);

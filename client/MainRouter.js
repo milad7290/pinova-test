@@ -8,8 +8,8 @@ import NewInvoiceStepper from "./invoice/NewInvoiceStepper";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import SimpleSnackbar from "./helper/SimpleSnackbar";
-import { getSnackInfo } from "./helper/helperReducer";
-import { hideSnack } from "./helper/helperActions";
+import { getSnackInfo } from "./helper/redux/helperReducer";
+import { hideSnack } from "./helper/redux/helperActions";
 class MainRouter extends Component {
   
   componentDidMount() {
@@ -38,7 +38,7 @@ class MainRouter extends Component {
     );
   }
 }
-// function mapStateToProps(state) {
+// const mapStateToProps = (state) => {
 //   return {
 //     snackInfo: getSnackInfo(state),
 //   };

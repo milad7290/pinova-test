@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 
-import invoices from "../invoice/invoiceReducer";
-import customers from "../customer/customerReducer";
-import products from "../product/productReducer";
-import step1 from "../invoice/step1/step1Reducer";
-import step2 from "../invoice/step2/step2Reducer";
-import helper from "../helper/helperReducer";
+import invoices from "../invoice/redux/invoiceReducer";
+import customers from "../customer/redux/customerReducer";
+import products from "../product/redux/productReducer";
+import step1 from "../invoice/step1/redux/step1Reducer";
+import step2 from "../invoice/step2/redux/step2Reducer";
+import helper from "../helper/redux/helperReducer";
 
 export default combineReducers({
   products,

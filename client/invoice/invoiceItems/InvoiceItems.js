@@ -11,13 +11,17 @@ import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import NewProduct from "../../product/NewProduct";
 import { connect } from "react-redux";
-import { fetchProducts, addProductRequest } from "../../product/productActions";
-import { showSnack, hideSnack } from "../../helper/helperActions";
-import { updateRow, setSelectedProduct } from "../step1/step1Actions";
-import { getProducts } from "../../product/productReducer";
-import { getRows, getSelectedProduct } from "../step1/step1Reducer";
+import {
+  fetchProducts,
+  addProductRequest
+} from "../../product/redux/productActions";
+import { showSnack, hideSnack } from "../../helper/redux/helperActions";
+import { updateRow, setSelectedProduct } from "../step1/redux/step1Actions";
+import { getProducts } from "../../product/redux/productReducer";
+import { getRows, getSelectedProduct } from "../step1/redux/step1Reducer";
 import SimpleSnackbar from "../../helper/SimpleSnackbar";
 import { numberWithoutCommas } from "../../helper/persianNumber";
+import InvoiceItem from "./InvoiceItem";
 
 const styles = theme => ({
   table: {
@@ -67,14 +71,6 @@ const styles = theme => ({
   rTableFoot: {
     backgroundColor: "#DDD"
   },
-  rTableCell: {
-    margin: 0,
-    display: "inline-block",
-    height: 40,
-    textAlign: "center",
-    padding: "2%",
-    width: "16%"
-  },
   flexElement: {
     display: "flex !important"
   },
@@ -97,7 +93,7 @@ class InvoiceItems extends PureComponent {
   };
 
   componentDidMount = () => {
-    this.props.dispatch(fetchProducts());
+    this.props.fetchProducts();
     const firstRow = {
       productId: "0",
       productName: "",
@@ -106,82 +102,91 @@ class InvoiceItems extends PureComponent {
       price: null,
       totalPrice: null
     };
-    if (this.props.rows.length === 0) {
-      let rows = [...this.props.rows];
+    if (this.props.invoiceRows.length === 0) {
+      let rows = [...this.props.invoiceRows];
       rows.push(firstRow);
-      this.props.dispatch(updateRow(rows));
+      this.props.updateRow(rows);
     }
   };
 
   handlepProductIdChange = productId => {
-    this.props.dispatch(setSelectedProduct(productId.toString()));
+    // this.props.setSelectedProduct(productId.toString());
+    this.setState({
+      selectedProduct: productId.toString()
+    });
   };
 
   getIndex = productId => {
-    const index = this.props.rows.findIndex(x => x.productId === productId);
+    const index = this.props.invoiceRows.findIndex(
+      x => x.productId === productId
+    );
     return index;
   };
 
   handleProductChange = name => event => {
     const value = event.target.value;
-    const index = this.props.rows.findIndex(x => x.productId === name);
-    const ifExist = this.props.rows.findIndex(x => x.productId === value);
+    const index = this.props.invoiceRows.findIndex(x => x.productId === name);
+    const ifExist = this.props.invoiceRows.findIndex(
+      x => x.productId === value
+    );
     if (ifExist !== -1) {
-      this.props.dispatch(showSnack("این کالا قبلا انتخاب شده است!", "war"));
+      this.props.showSnack("این کالا قبلا انتخاب شده است!", "war");
       return;
     }
-    let rows = [...this.props.rows];
+    let rows = [...this.props.invoiceRows];
     rows[index].productId = value;
     rows[index].productName = this.props.products.find(
       x => x._id === value
     ).name;
     rows[index].price = this.props.products.find(x => x._id === value).price;
     rows[index].totalPrice = rows[index].price * rows[index].count;
-    this.props.dispatch(updateRow(rows));
-    this.props.rows[index].countRef.current.focus();
-    if (index === this.props.rows.length - 1) {
+    this.props.updateRow(rows);
+    this.props.invoiceRows[index].countRef.current.focus();
+    if (index === this.props.invoiceRows.length - 1) {
       this.handleClickNewRow();
     }
   };
 
   selectedRowProductChange = product => {
     let addedProduct;
-    this.props.dispatch(addProductRequest(product)).then(res => {
-      this.props.dispatch(showSnack("محصول با موفقیت اضافه شد", "suc"));
-      addedProduct = res.product;
-      const index = this.props.rows.findIndex(
-        x => x.productId === this.props.selectedProduct
-      );
-      let rows = [...this.props.rows];
-      rows[index].productName = addedProduct.name;
-      rows[index].productId = addedProduct._id;
-      rows[index].price = addedProduct.price;
-      rows[index].totalPrice = rows[index].price * rows[index].count;
-      this.props.dispatch(updateRow(rows));
-      if (index === this.props.rows.length - 1) {
-        this.handleClickNewRow();
-      }
-    });
+    this.props.addProductRequest(product);
+    this.props.showSnack("محصول با موفقیت اضافه شد", "suc");
+    addedProduct = this.props.products[this.props.products.length];
+    const index = this.props.invoiceRows.findIndex(
+      x => x.productId === this.state.selectedProduct
+    );
+    let rows = [...this.props.invoiceRows];
+    rows[index].productName = addedProduct.name;
+    rows[index].productId = addedProduct._id;
+    rows[index].price = addedProduct.price;
+    rows[index].totalPrice = rows[index].price * rows[index].count;
+    this.props.updateRow(rows);
+    if (index === this.props.invoiceRows.length - 1) {
+      this.handleClickNewRow();
+    }
   };
 
   handleCountChange = name => event => {
-    const index = this.props.rows.findIndex(x => x.productId === name);
+    const index = this.props.invoiceRows.findIndex(x => x.productId === name);
     const value = event.target.value;
     if (value < 1) {
       return;
     }
-    let rows = [...this.props.rows];
+    let rows = [...this.props.invoiceRows];
     rows[index].count = value;
     rows[index].totalPrice = rows[index].price * rows[index].count;
-    this.props.dispatch(updateRow(rows));
+    this.props.updateRow(rows);
   };
 
   handleClickNewRow = () => {
-    const productId = this.props.rows[this.props.rows.length - 1].productId;
-    if (!this.props.rows[this.props.rows.length - 1].price) {
-      this.props.dispatch(
-        showSnack("برای اضافه کردن سطر جدید، اطلاعات ردیف را کامل کنید", "war")
+    const productId = this.props.invoiceRows[this.props.invoiceRows.length - 1]
+      .productId;
+    if (!this.props.invoiceRows[this.props.invoiceRows.length - 1].price) {
+      this.props.showSnack(
+        "برای اضافه کردن سطر جدید، اطلاعات ردیف را کامل کنید",
+        "war"
       );
+
       return;
     }
     const newRow = {
@@ -192,20 +197,20 @@ class InvoiceItems extends PureComponent {
       price: null,
       totalPrice: null
     };
-    let rows = [...this.props.rows];
+    let rows = [...this.props.invoiceRows];
     rows.push(newRow);
-    this.props.dispatch(updateRow(rows));
+    this.props.updateRow(rows);
   };
 
   handleClickRemoveRow = productId => {
-    let rows = [...this.props.rows];
+    let rows = [...this.props.invoiceRows];
     const index = rows.findIndex(x => x.productId === productId);
     rows.splice(index, 1);
-    this.props.dispatch(updateRow(rows));
+    this.props.updateRow(rows);
   };
 
   handleClose = () => {
-    this.props.dispatch(hideSnack());
+    this.props.hideSnack();
   };
 
   render() {
@@ -231,106 +236,21 @@ class InvoiceItems extends PureComponent {
                 <strong>اضافه و پاک</strong>
               </div>
             </div>
-            {this.props.rows.map(row => (
-              <div
-                className={classes.rTableRow}
-                onClick={() =>
-                  this.handlepProductIdChange(row.productId.toString())
-                }
+            {this.props.invoiceRows.map(row => (
+              <InvoiceItem
                 key={row.productId}
-              >
-                <div className={classes.rTableCell}>
-                  <div className={classes.addProduct}>
-                    <div>
-                      <NewProduct
-                        selectedRowChange={this.selectedRowProductChange}
-                      />
-                    </div>
-                    <div>
-                      <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="product-native-simple" />
-                        <Select
-                          native
-                          value={row.productId.toString()}
-                          onChange={this.handleProductChange(
-                            row.productId.toString()
-                          )}
-                          inputProps={{
-                            name: row.productId.toString(),
-                            id: "product-native-simple"
-                          }}
-                        >
-                          <option value="" />
-                          {this.props.products.map(product => (
-                            <option key={product._id} value={product._id}>
-                              {product.name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </div>
-                  </div>
-                </div>
-                <div className={classes.rTableCell}>
-                  <TextField
-                    id="standard-number"
-                    label="تعداد"
-                    onChange={this.handleCountChange(row.productId.toString())}
-                    type="number"
-                    inputRef={row.countRef}
-                    defaultValue={1}
-                    className={classes.textField}
-                    InputLabelProps={{
-                      shrink: true
-                    }} // TODO syntax wrong ??
-                    inputProps={{
-                      name: row.productId.toString()
-                    }}
-                    margin="normal"
-                    classes={{
-                      root: classes.flexElement
-                    }}
-                  />
-                </div>
-                <div className={classes.rTableCell}>
-                  {numberWithoutCommas(row.price)}
-                </div>
-                <div className={classes.rTableCell}>
-                  {numberWithoutCommas(row.totalPrice)}
-                </div>
-                <div className={classes.rTableCell}>
-                  <div className={classes.addProduct}>
-                    {this.props.rows.length - 1 ===
-                    this.getIndex(row.productId) ? (
-                      <div>
-                        <IconButton
-                          onClick={this.handleClickNewRow}
-                          aria-label="اضافه کردن ردیف"
-                        >
-                          <AddCircle />
-                        </IconButton>
-                      </div>
-                    ) : (
-                      <div />
-                    )}
-                    {0 !== this.getIndex(row.productId) ||
-                    this.props.rows.length > 1 ? (
-                      <div>
-                        <IconButton
-                          onClick={() =>
-                            this.handleClickRemoveRow(row.productId.toString())
-                          }
-                          aria-label="پاک کردن ردیف"
-                        >
-                          <RemoveCircle />
-                        </IconButton>
-                      </div>
-                    ) : (
-                      <div />
-                    )}
-                  </div>
-                </div>
-              </div>
+                products={this.props.products}
+                invoiceRows={this.props.invoiceRows}
+                row={row}
+                ProductIdChange={this.handlepProductIdChange}
+                ProductChange={this.handleProductChange}
+                CountChange={this.handleCountChange}
+                ClickRemoveRow={this.handleClickRemoveRow}
+                ClickNewRow={this.handleClickNewRow}
+                getIndex={this.getIndex}
+                isLoadingProduct={this.props.isLoadingProduct}
+                selectedRowProductChange={this.selectedRowProductChange}
+              />
             ))}
           </div>
         </Paper>
@@ -339,19 +259,24 @@ class InvoiceItems extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    products: getProducts(state) ? getProducts(state) : [],
-    rows: getRows(state),
-    selectedProduct: getSelectedProduct(state)
-  };
-}
+// const mapStateToProps = (state) => {
+//   return {
+//     products: getProducts(state) ? getProducts(state) : [],
+//     rows: getRows(state),
+//     selectedProduct: getSelectedProduct(state)
+//   };
+// }
 
 InvoiceItems.propTypes = {
   classes: PropTypes.object.isRequired,
-  products: PropTypes.array,
-  rows: PropTypes.array,
-  selectedProduct: PropTypes.string
+  products: PropTypes.array.isRequired,
+  invoiceRows: PropTypes.array.isRequired,
+  // selectedProduct: PropTypes.string.isRequired,
+  updateRow: PropTypes.func.isRequired,
+  // setSelectedProduct: PropTypes.func.isRequired,
+  showSnack: PropTypes.func.isRequired,
+  addProductRequest: PropTypes.func.isRequired,
+  hideSnack: PropTypes.func.isRequired
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(InvoiceItems));
+export default withStyles(styles)(InvoiceItems);

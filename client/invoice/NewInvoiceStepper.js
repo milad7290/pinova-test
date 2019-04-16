@@ -11,35 +11,58 @@ import NewInvoiceStep2 from "./step2/NewInvoiceStep2";
 import { Redirect } from "react-router-dom";
 import SimpleSnackbar from "../helper/SimpleSnackbar";
 import { connect } from "react-redux";
-import { getLoading } from "../invoice/invoiceReducer";
-import { addInvoiceRequest } from "../invoice/invoiceActions";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import green from "@material-ui/core/colors/green";
 import classNames from "classnames";
+
+import {addInvoiceRequest} from "./redux/invoiceActions";
+import { getInvoiceLoading } from "./redux/invoiceSelector";
+
+import {
+  updateCustomer,
+  updateCustomerId,
+  updateRow,
+  fetchNextInvoiceNumber
+} from "./step1/redux/step1Actions";
 import {
   getRows,
   getCustomer,
   getCustomerId,
   getInvoiceNumber,
-  getStepperStep,
-  getRedirectStatus
-} from "./step1/step1Reducer";
+} from "./step1/redux/step1Selector";
 
-import { fetchNextInvoiceNumber, setStepperStep } from "./step1/step1Actions";
-import { fetchIranStates } from "./step2/step2Actions";
+import {
+  updateDeliveryAmount,
+  updateDeliveryTime,
+  updatePostType,
+  updateSelectedCity,
+  updateSelectedState,
+  fetchIranStates
+} from "./step2/redux/step2Actions";
 import {
   getDeliveryAmount,
+  getDeliveryTime,
   getPostType,
-  getSelectedState,
+  getCities,
+  getStates,
   getSelectedCity,
-  getDeliveryTime
-} from "./step2/step2Reducer";
+  getSelectedState
+} from "./step2/redux/step2Selector";
 
-import { showSnack, hideSnack } from "../helper/helperActions";
-import { getSnackInfo } from "../helper/helperReducer";
+import { fetchCustomers } from "../customer/redux/customerActions";
+import { getCustomers } from "../customer/redux/customerSelector";
 
-//TODO fix code style
-//TODO fix selector
+import {
+  fetchProducts,
+  addProductRequest
+} from "../product/redux/productActions";
+import {
+  getProductLoading,
+  getProducts
+} from "../product/redux/productSelector";
+
+import { showSnack, hideSnack } from "../helper/redux/helperActions";
+import { getSnackInfo } from "../helper/redux/helperSelector";
 
 const styles = theme => ({
   root: {
@@ -94,24 +117,61 @@ function getSteps() {
 }
 
 class NewInvoiceStepper extends React.Component {
-
+  state = {
+    activeStep: 0
+  };
   componentDidMount = () => {
-    this.props.dispatch(fetchIranStates());
-    const step = this.props.activeStep;
+    this.props.fetchIranStates();
+    const step = this.state.activeStep;
     window.onpopstate = event => {
-      if (this.props.activeStep === 1) {
-        this.props.dispatch(setStepperStep(step - 1));
+      if (this.state.activeStep === 1) {
+        // this.props.setStepperStep(step - 1);
+        this.setState({
+          activeStep: step - 1
+        });
       }
     };
-    this.props.dispatch(fetchNextInvoiceNumber());
+    this.props.fetchNextInvoiceNumber();
   };
 
   getStepContent = stepIndex => {
     switch (stepIndex) {
       case 0:
-        return <NewInvoiceStep1 />;
+        return (
+          <NewInvoiceStep1
+            customers={this.props.customers}
+            invoiceCustomer={this.props.invoiceCustomer}
+            invoiceNumber={this.props.invoiceNumber}
+            fetchCustomers={this.props.fetchCustomers}
+            updateCustomer={this.props.updateCustomer}
+            updateCustomerId={this.props.updateCustomerId}
+            products={this.props.products}
+            invoiceRows={this.props.invoiceRows}
+            fetchProducts={this.props.fetchProducts}
+            updateRow={this.props.updateRow}
+            showSnack={this.props.showSnack}
+            addProductRequest={this.props.addProductRequest}
+            hideSnack={this.props.hideSnack}
+            isLoadingProduct={this.props.isLoadingProduct}
+          />
+        );
       case 1:
-        return <NewInvoiceStep2 />;
+        return (
+          <NewInvoiceStep2
+            states={this.props.states}
+            cities={this.props.cities}
+            selectedCity={this.props.selectedCity}
+            selectedState={this.props.selectedState}
+            updateSelectedState={this.props.updateSelectedState}
+            updateSelectedCity={this.props.updateSelectedCity}
+            postType={this.props.postType}
+            updatePostType={this.props.updatePostType}
+            deliveryAmount={this.props.deliveryAmount}
+            deliveryTime={this.props.deliveryTime}
+            updateDeliveryTime={this.props.updateDeliveryTime}
+            updateDeliveryAmount={this.props.updateDeliveryAmount}
+          />
+        );
       default:
         return "Unknown stepIndex"; //TODO handle react error throw new Error('')
     }
@@ -134,15 +194,15 @@ class NewInvoiceStepper extends React.Component {
   handleNext = () => {
     // remove persian charachter from codes
     // TODO remove distapch
-    const {total,checkedRows} = this.checkForRows();
-    switch (this.props.activeStep) {
+    const { total, checkedRows } = this.checkForRows();
+    switch (this.state.activeStep) {
       case 0:
         if (checkedRows.length === 0 || this.props.invoiceCustomer === "") {
           const message =
             this.props.invoiceCustomer === ""
               ? "اطلاعات مربوط به نام و نام خانوادگی را تکمیل کنید"
               : "اطلاعات مربوط به فاکتور را تکمیل کنید";
-          this.props.dispatch(showSnack(message, "war"));
+          this.props.showSnack(message, "war");
           return;
         }
         break;
@@ -162,14 +222,14 @@ class NewInvoiceStepper extends React.Component {
               : this.props.postType === ""
               ? "اطلاعات مربوط به روش پست را تکمیل کنید"
               : "اطلاعات مربوط به تاریخ تحویل را تکمیل کنید";
-          this.props.dispatch(showSnack(message, "war"));
+          this.props.showSnack(message, "war");
           return;
         }
         break;
       default:
         break;
     }
-    if (this.props.activeStep === getSteps().length - 1) {
+    if (this.state.activeStep === getSteps().length - 1) {
       let invoice = {
         invoiceNumber: this.props.invoiceNumber,
         invoiceCustomer: this.props.invoiceCustomer,
@@ -189,35 +249,42 @@ class NewInvoiceStepper extends React.Component {
         },
         totalPrice: total
       };
-      this.props.dispatch(addInvoiceRequest(invoice)).then(res => {});
+      this.props.addInvoiceRequest(invoice);
     } else {
-      const step = this.props.activeStep;
+      const step = this.state.activeStep;
       history.pushState(null, null, location.href);
-      this.props.dispatch(setStepperStep(step + 1));
+      this.setState({
+        activeStep: step + 1
+      });
     }
   };
-  
+
   handleBack = () => {
-    const step = this.props.activeStep;
-    this.props.dispatch(setStepperStep(step - 1));
+    const step = this.state.activeStep;
+    this.setState({
+      activeStep: step - 1
+    });
   };
 
   handleReset = () => {
-    this.props.dispatch(setStepperStep(0));
+    this.setState({
+      activeStep: 0
+    });
   };
 
   handleClose = () => {
-    this.props.dispatch(hideSnack());
+    this.props.hideSnack();
   };
 
   render() {
-    const { classes ,activeStep } = this.props;
+    const { classes } = this.props;
+    const { activeStep } = this.state;
     //TODO remove this line
     const buttonClassname = classNames({
       [classes.buttonSuccess]: false
     });
     const steps = getSteps(); // TODO this is wrong why?
-    if (this.props.redirect) {
+    if (this.state.redirect) {
       return <Redirect to={"/"} />;
     }
     return (
@@ -256,12 +323,12 @@ class NewInvoiceStepper extends React.Component {
                   <Button
                     variant="contained"
                     className={buttonClassname}
-                    disabled={this.props.isLoading}
+                    disabled={this.props.isLoadingInvoice}
                     onClick={this.handleNext}
                   >
                     {activeStep === steps.length - 1 ? "ذخیره" : "مرحله بعد"}
                   </Button>
-                  {this.props.isLoading && (
+                  {this.props.isLoadingInvoice && (
                     <CircularProgress
                       size={24}
                       className={classes.buttonProgress}
@@ -283,39 +350,130 @@ class NewInvoiceStepper extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = state => {
   return {
-    isLoading: getLoading(state),
+    isLoadingInvoice: getInvoiceLoading(state),
+    isLoadingProduct: getProductLoading(state),
     invoiceRows: getRows(state),
-    postType: getPostType(state),
-    deliveryAmount: getDeliveryAmount(state),
-    deliveryTime: getDeliveryTime(state),
-    selectedCity: getSelectedCity(state),
-    selectedState: getSelectedState(state),
     invoiceCustomer: getCustomer(state),
     invoiceCustomerIdInfo: getCustomerId(state),
     invoiceNumber: getInvoiceNumber(state),
     snackInfo: getSnackInfo(state),
-    activeStep: getStepperStep(state),
-    redirect: getRedirectStatus(state)
+
+    customers: getCustomers(state),
+
+    products: getProducts(state) ? getProducts(state) : [],
+
+    deliveryAmount: getDeliveryAmount(state),
+    deliveryTime: getDeliveryTime(state),
+
+    postType: getPostType(state),
+
+    states: getStates(state),
+    cities: getCities(state),
+    selectedCity: getSelectedCity(state),
+    selectedState: getSelectedState(state)
   };
-}
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchIranStates: () => {
+      dispatch(fetchIranStates());
+    },
+    fetchNextInvoiceNumber: () => {
+      dispatch(fetchNextInvoiceNumber());
+    },
+    addInvoiceRequest: (invoice) => {
+      dispatch(addInvoiceRequest(invoice));
+    },
+    updateCustomerId: (id, lable) => {
+      dispatch(updateCustomerId(id, lable));
+    },
+    updateCustomer: value => {
+      dispatch(updateCustomer(value));
+    },
+    fetchCustomers: value => {
+      dispatch(fetchCustomers(value));
+    },
+
+    fetchProducts: () => {
+      dispatch(fetchProducts());
+    },
+    updateRow: invoiceRows => {
+      dispatch(updateRow(invoiceRows));
+    },
+    showSnack: (message, messageType) => {
+      dispatch(showSnack(message, messageType));
+    },
+    addProductRequest: product => {
+      dispatch(addProductRequest(product));
+    },
+    hideSnack: () => {
+      dispatch(hideSnack());
+    },
+
+    updateDeliveryTime: deliveryTime => {
+      dispatch(updateDeliveryTime(deliveryTime));
+    },
+    updateDeliveryAmount: deliveryAmount => {
+      dispatch(updateDeliveryAmount(deliveryAmount));
+    },
+
+    updatePostType: postType => {
+      dispatch(updatePostType(postType));
+    },
+
+    updateSelectedState: selectedState => {
+      dispatch(updateSelectedState(selectedState));
+    },
+    updateSelectedCity: selectedCity => {
+      dispatch(updateSelectedCity(selectedCity));
+    }
+  };
+};
 
 NewInvoiceStepper.propTypes = {
   classes: PropTypes.object,
-  isLoading: PropTypes.bool,
+  isLoadingInvoice: PropTypes.bool,
+  isLoadingProduct: PropTypes.bool,
   invoiceRows: PropTypes.array,
   invoiceNumber: PropTypes.string,
   invoiceCustomer: PropTypes.string,
   invoiceCustomerIdInfo: PropTypes.object,
+  snackInfo: PropTypes.object,
+
+  order: PropTypes.string,
+  customers: PropTypes.array,
+  fetchCustomers: PropTypes.func,
+  updateCustomer: PropTypes.func,
+  updateCustomerId: PropTypes.func,
+
+  products: PropTypes.array,
+  selectedProduct: PropTypes.string,
+  fetchProducts: PropTypes.func,
+  updateRow: PropTypes.func,
+  showSnack: PropTypes.func,
+  addProductRequest: PropTypes.func,
+  hideSnack: PropTypes.func,
+
   deliveryAmount: PropTypes.string,
   deliveryTime: PropTypes.string,
+  updateDeliveryTime: PropTypes.func,
+  updateDeliveryAmount: PropTypes.func,
+
   postType: PropTypes.string,
+  updatePostType: PropTypes.func,
+
+  states: PropTypes.array,
+  cities: PropTypes.array,
   selectedCity: PropTypes.string,
   selectedState: PropTypes.string,
-  activeStep: PropTypes.number,
-  redirect: PropTypes.bool,
-  snackInfo: PropTypes.object
+  updateSelectedState: PropTypes.func,
+  updateSelectedCity: PropTypes.func
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(NewInvoiceStepper));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(NewInvoiceStepper));

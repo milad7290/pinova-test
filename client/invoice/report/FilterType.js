@@ -8,8 +8,8 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import Typography from "@material-ui/core/Typography";
 import { connect } from "react-redux";
-import { setFilterType } from "../../invoice/invoiceActions";
-import { getFilterType } from "../../invoice/invoiceReducer";
+import { setFilterType } from "../redux/invoiceActions";
+import { getFilterType } from "../redux/invoiceReducer";
 const styles = theme => ({
   root: {
     margin: theme.spacing.unit
@@ -27,10 +27,13 @@ const styles = theme => ({
 });
 
 class FilterType extends React.Component {
-  
+  state = {
+    filterType: 'factorItems',
+  };
   handleChange = event => {
     const value = event.target.value;
-    this.props.dispatch(setFilterType(value));
+    this.setState({ filterType:value });
+    this.props.setFilterType(value,'filterType');
   };
 
   render() {
@@ -48,7 +51,7 @@ class FilterType extends React.Component {
               aria-label=""
               name="gender1"
               className={classes.group}
-              value={this.props.filterType}
+              value={this.state.filterType}
               onChange={this.handleChange}
             >
               <FormControlLabel
@@ -69,14 +72,15 @@ class FilterType extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    filterType: getFilterType(state)
-  };
-}
+// const mapStateToProps = (state) => {
+//   return {
+//     filterType: getFilterType(state)
+//   };
+// }
 
 FilterType.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  setFilterType:PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(FilterType));
+export default withStyles(styles)(FilterType);

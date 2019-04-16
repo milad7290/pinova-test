@@ -20,20 +20,17 @@ import InvoiceTable from "./InvoiceTable";
 import HomeIcon from "@material-ui/icons/Home";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import {
-  fetchInvoices,
-  setReportDrwer,
-  setReportPage
-} from "../../invoice/invoiceActions";
-import {
-  getInvoices,
-  getFilterType,
-  getFilterTypeSearch,
-  getFromDate,
-  getToDate,
-  getDrwerStatus,
-  getReportPage
-} from "../../invoice/invoiceReducer";
+import { fetchInvoices} from '../redux/invoiceActions'
+import { getInvoices} from '../redux/invoiceSelector'
+
+// invoices: getInvoices(state),
+// filterType: getFilterType(state),
+// filterTypeSearch: getFilterTypeSearch(state),
+// fromDate: getFromDate(state),
+// toDate: getToDate(state),
+// pageNumber: getReportPage(state),
+// open: getDrwerStatus(state)
+
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -105,7 +102,11 @@ class InvoiceReport extends React.Component {
   now = new Date();
   state = {
     open: false,
-    pageNumber: 0
+    filterType:'factorItems',
+    filterTypeToSearch:'factorItems',
+    fromDate:this.now.setFullYear(2019,2),
+    toDate:new Date(),
+    pageNumber:0
   };
 
   componentDidMount = () => {
@@ -114,9 +115,9 @@ class InvoiceReport extends React.Component {
       from: "notSet",
       to: "notSet",
       page: 0,
-      offset: this.props.filterType === "factorItems" ? 20 : 25
+      offset: this.state.filterType === "factorItems" ? 20 : 25
     };
-    this.props.dispatch(fetchInvoices(params));
+    this.props.fetchInvoices(params);
   };
 
   componentWillUnmount = () => {
@@ -136,29 +137,28 @@ class InvoiceReport extends React.Component {
       Math.ceil(scrollTop + clientHeight) >= scrollHeight;
 
     if (scrolledToBottom) {
-      const page = this.props.pageNumber;
-      this.props.dispatch(setReportPage(page + 1));
+      let page = this.state.pageNumber;
+      this.setState({pageNumber:++page});
       this.loadMore();
     }
   };
 
-  handleDrawerOpen = () => {
-    this.props.dispatch(setReportDrwer());
+  handleDrawerOpenOrClose = () => {
+    this.setState({ open: !this.state.open });
   };
-
-  handleDrawerClose = () => {
-    this.props.dispatch(setReportDrwer());
+  handleChange = (value,name)  => {
+    this.setState({ [name]: value });
   };
-
   handleSearch = () => {
-    this.props.dispatch(setReportPage(0));
+    this.setState({ filterTypeToSearch: this.state.filterType ,
+      pageNumber:0 });
     const params = {
-      from: this.props.fromDate,
-      to: this.props.toDate,
+      from: this.state.fromDate,
+      to: this.state.toDate,
       page: 0,
-      offset: this.props.filterType === "factorItems" ? 20 : 25
+      offset: this.state.filterType === "factorItems" ? 20 : 25
     };
-    this.props.dispatch(fetchInvoices(params));
+    this.props.fetchInvoices(params);
   };
   invoiceItems = () => {
     let items = [];
@@ -182,14 +182,15 @@ class InvoiceReport extends React.Component {
     const params = {
       from: "notSet",
       to: "notSet",
-      page: this.props.pageNumber,
-      offset: this.props.filterType === "factorItems" ? 20 : 25
+      page: this.state.pageNumber,
+      offset: this.state.filterType === "factorItems" ? 20 : 25
     };
-    this.props.dispatch(fetchInvoices(params));
+    this.props.fetchInvoices(params);
   };
 
   render() {
-    const { classes, theme, open } = this.props;
+    const { classes, theme } = this.props;
+    const { fromDate, toDate, open,filterType } = this.state;
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -203,7 +204,7 @@ class InvoiceReport extends React.Component {
             <IconButton
               color="inherit"
               aria-label="Open drawer"
-              onClick={this.handleDrawerOpen}
+              onClick={this.handleDrawerOpenOrClose}
               className={classNames(classes.menuButton, open && classes.hide)}
             >
               <MenuIcon />
@@ -228,7 +229,7 @@ class InvoiceReport extends React.Component {
           }}
         >
           <div className={classes.drawerHeader}>
-            <IconButton onClick={this.handleDrawerClose}>
+            <IconButton onClick={this.handleDrawerOpenOrClose}>
               {theme.direction === "rtl" ? (
                 <ChevronLeftIcon />
               ) : (
@@ -237,9 +238,16 @@ class InvoiceReport extends React.Component {
             </IconButton>
           </div>
           <Divider />
-          <TimeFilter />
+          <TimeFilter
+            setDate={this.handleChange}
+            fromDate={fromDate}
+            toDate={toDate}
+          />
           <Divider />
-          <FilterType />
+          <FilterType
+            filterType={this.filterType}
+            setFilterType={this.handleChange}
+          />
           <Divider />
           <Button onClick={this.handleSearch} className={classes.button}>
             <SearchIcon
@@ -254,9 +262,9 @@ class InvoiceReport extends React.Component {
           })}
         >
           <InvoiceTable
-            filterType={this.props.filterTypeSearch}
+            filterType={this.state.filterTypeToSearch}
             invoices={
-              this.props.filterTypeSearch === "factorItems"
+              this.state.filterTypeToSearch === "factorItems"
                 ? this.invoiceItems()
                 : this.props.invoices
             }
@@ -267,28 +275,26 @@ class InvoiceReport extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = state => {
   return {
     invoices: getInvoices(state),
-    filterType: getFilterType(state),
-    filterTypeSearch: getFilterTypeSearch(state),
-    fromDate: getFromDate(state),
-    toDate: getToDate(state),
-    pageNumber: getReportPage(state),
-    open: getDrwerStatus(state)
   };
-}
-
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchInvoices: (params) => {
+      dispatch(fetchInvoices(params));
+    },
+  };
+};
 InvoiceReport.propTypes = {
-  invoices: PropTypes.array,
-  filterType: PropTypes.string,
-  filterTypeSearch: PropTypes.string,
-  pageNumber: PropTypes.number,
-  open: PropTypes.bool,
   classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired
+  invoices: PropTypes.array,
+  theme: PropTypes.object.isRequired,
+  fetchInvoices: PropTypes.func,
 };
 
-export default connect(mapStateToProps)(
-  withStyles(styles, { withTheme: true })(InvoiceReport)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles, { withTheme: true })(InvoiceReport));

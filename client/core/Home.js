@@ -176,7 +176,7 @@ export default withStyles(styles)(Home);
 //     )
 //   }
 // }
-// function mapStateToProps(state) {
+// const mapStateToProps = (state) => {
 //   return {
 //     isSaved: getSaved(state),
 //   };

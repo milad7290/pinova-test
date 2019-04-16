@@ -10,8 +10,8 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import { connect } from "react-redux";
-import { updateDeliveryAmount, updateDeliveryTime } from "./step2Actions";
-import { getDeliveryAmount, getDeliveryTime } from "./step2Reducer";
+import { updateDeliveryAmount, updateDeliveryTime } from "./redux/step2Actions";
+import { getDeliveryAmount, getDeliveryTime } from "./redux/step2Reducer";
 const styles = theme => ({
   root: {
     width: "60%"
@@ -30,10 +30,10 @@ class DeliveryTime extends PureComponent {
     const value = event.target.value;
     switch (name) {
       case "selectedTime":
-        this.props.dispatch(updateDeliveryTime(value));
+        this.props.updateDeliveryTime(value);
         break;
       case "amount":
-        this.props.dispatch(updateDeliveryAmount(value));
+        this.props.updateDeliveryAmount(value);
         break;
       default:
         break;
@@ -55,7 +55,7 @@ class DeliveryTime extends PureComponent {
                   margin="dense"
                   id="amount"
                   label=""
-                  type="text"
+                  type="number"
                   value={this.props.deliveryAmount}
                   onChange={this.handleChange("amount")}
                 />
@@ -91,17 +91,19 @@ class DeliveryTime extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    deliveryAmount: getDeliveryAmount(state),
-    deliveryTime: getDeliveryTime(state)
-  };
-}
+// const mapStateToProps = (state) => {
+//   return {
+//     deliveryAmount: getDeliveryAmount(state),
+//     deliveryTime: getDeliveryTime(state)
+//   };
+// }
 
 DeliveryTime.propTypes = {
   classes: PropTypes.object.isRequired,
-  deliveryAmount: PropTypes.string,
-  deliveryTime: PropTypes.string
+  deliveryAmount: PropTypes.string.isRequired,
+  deliveryTime: PropTypes.string.isRequired,
+  updateDeliveryTime :PropTypes.func.isRequired,
+  updateDeliveryAmount :PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(DeliveryTime));
+export default withStyles(styles)(DeliveryTime);

@@ -7,11 +7,11 @@ import Grid from "@material-ui/core/Grid";
 import IntegrationAutosuggest from "../../customer/IntegrationAutosuggest";
 import InvoiceItems from "../invoiceItems/InvoiceItems";
 import moment from "moment-jalaali";
+import {getFarsi} from '../../helper/farsi'
 import { connect } from "react-redux";
-import { getInvoiceNumber } from "./step1Reducer";
+import { getInvoiceNumber } from "./redux/step1Reducer";
 const styles = theme => ({});
 class NewInvoiceStep1 extends React.PureComponent {
-  
   state = {
     now: new Date().toDateString()
   };
@@ -24,7 +24,7 @@ class NewInvoiceStep1 extends React.PureComponent {
           <div className={classes.root}>
             <Grid container spacing={24}>
               <Grid item xs={6} sm={6}>
-                <span>شماره فاکتور: </span> {this.props.order}
+                <span>{getFarsi('INVOICE_NUMBER')} </span> {this.props.invoiceNumber}
               </Grid>
               <Grid item xs={6} sm={6}>
                 <span>تاریخ امروز: </span>{" "}
@@ -34,10 +34,25 @@ class NewInvoiceStep1 extends React.PureComponent {
           </div>
           <br />
           <div>
-            <IntegrationAutosuggest />
+            <IntegrationAutosuggest
+              customers={this.props.customers}
+              invoiceCustomer={this.props.invoiceCustomer}
+              fetchCustomers={this.props.fetchCustomers}
+              updateCustomer={this.props.updateCustomer}
+              updateCustomerId={this.props.updateCustomerId}
+            />
           </div>
           <div>
-            <InvoiceItems />
+            <InvoiceItems
+              products={this.props.products}
+              invoiceRows={this.props.invoiceRows}
+              fetchProducts={this.props.fetchProducts}
+              updateRow={this.props.updateRow}
+              showSnack={this.props.showSnack}
+              addProductRequest={this.props.addProductRequest}
+              hideSnack={this.props.hideSnack}
+              isLoadingProduct={this.props.isLoadingProduct}
+            />
           </div>
         </CardContent>
       </Card>
@@ -45,15 +60,29 @@ class NewInvoiceStep1 extends React.PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    order: getInvoiceNumber(state)
-  };
-}
+// const mapStateToProps = (state) => {
+//   return {
+//     order: getInvoiceNumber(state)
+//   };
+// }
 
 NewInvoiceStep1.propTypes = {
   classes: PropTypes.object.isRequired,
-  order: PropTypes.string
+
+  invoiceNumber: PropTypes.string.isRequired,
+  customers: PropTypes.array.isRequired,
+  invoiceCustomer: PropTypes.string.isRequired,
+  fetchCustomers: PropTypes.func.isRequired,
+  updateCustomer: PropTypes.func.isRequired,
+  updateCustomerId: PropTypes.func.isRequired,
+
+  products: PropTypes.array.isRequired,
+  invoiceRows: PropTypes.array.isRequired,
+  fetchProducts: PropTypes.func.isRequired,
+  updateRow: PropTypes.func.isRequired,
+  showSnack: PropTypes.func.isRequired,
+  addProductRequest: PropTypes.func.isRequired,
+  hideSnack: PropTypes.func.isRequired
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(NewInvoiceStep1));
+export default withStyles(styles)(NewInvoiceStep1);
