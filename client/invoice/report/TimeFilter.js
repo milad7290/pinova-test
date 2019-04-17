@@ -24,7 +24,7 @@ const styles = theme => ({
   }
 });
 
-class TimeFilter extends React.Component {
+class TimeFilter extends React.PureComponent {
   
   componentDidMount = () => {
     jmoment.loadPersian({ dialect: "persian-modern", usePersianDigits: true });
@@ -37,6 +37,7 @@ class TimeFilter extends React.Component {
   };
 
   render() {
+    console.log('time filter render')
     const { classes } = this.props;
 
     return (

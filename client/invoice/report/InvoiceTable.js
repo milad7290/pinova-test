@@ -76,7 +76,7 @@ const styles = theme => ({
     width: "20%"
   }
 });
-class InvoiceTable extends React.Component {
+class InvoiceTable extends React.PureComponent {
   state = {};
   componentDidMount = () => {
     moment.loadPersian({ dialect: "persian-modern", usePersianDigits: true });

@@ -26,7 +26,7 @@ const styles = theme => ({
   }
 });
 
-class FilterType extends React.Component {
+class FilterType extends React.PureComponent{
   state = {
     filterType: 'factorItems',
   };

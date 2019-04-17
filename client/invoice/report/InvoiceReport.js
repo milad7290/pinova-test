@@ -99,12 +99,11 @@ const styles = theme => ({
 });
 
 class InvoiceReport extends React.Component {
-  now = new Date();
   state = {
     open: false,
     filterType:'factorItems',
     filterTypeToSearch:'factorItems',
-    fromDate:this.now.setFullYear(2019,2),
+    fromDate:new Date().setFullYear(2019,2),
     toDate:new Date(),
     pageNumber:0
   };
@@ -150,6 +149,7 @@ class InvoiceReport extends React.Component {
     this.setState({ [name]: value });
   };
   handleSearch = () => {
+    console.log('this.state',this.state)
     this.setState({ filterTypeToSearch: this.state.filterType ,
       pageNumber:0 });
     const params = {
@@ -245,7 +245,7 @@ class InvoiceReport extends React.Component {
           />
           <Divider />
           <FilterType
-            filterType={this.filterType}
+            filterType={filterType}
             setFilterType={this.handleChange}
           />
           <Divider />
